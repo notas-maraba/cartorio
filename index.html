@@ -4,32 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>1º Tabelionato de Notas de Marabá — Sistema de Protocolos</title>
-
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-
-<!-- Tabler Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f5f4f0;--surface:#ffffff;--surface2:#f9f8f5;--border:#e2e0da;
+  --bg:#f5f4f0;--surface:#fff;--surface2:#f9f8f5;--border:#e2e0da;
   --text:#1a1917;--muted:#6b6860;--accent:#1a3a5c;--accent2:#c8a96e;
-  --green:#2d6a4f;--red:#8b1a1a;--amber:#7a5c1a;
-  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
-  --r:6px;--r2:10px;
+  --green:#2d6a4f;--red:#8b1a1a;--font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;--r:6px;--r2:10px;
 }
 body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
 .app{display:flex;flex-direction:column;min-height:100vh}
-
-/* LOGIN */
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--accent);padding:2rem}
 .login-card{background:var(--surface);border-radius:var(--r2);padding:2.5rem;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .login-logo{text-align:center;margin-bottom:2rem}
@@ -46,140 +35,124 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#122d4a}
 .btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text)}.btn-secondary:hover{background:var(--surface2)}
 .btn-danger{background:#fee2e2;color:var(--red);border:1px solid #fca5a5}.btn-danger:hover{background:#fca5a5}
-.btn-success{background:#dcfce7;color:var(--green);border:1px solid #86efac}.btn-success:hover{background:#bbf7d0}
+.btn-success{background:#dcfce7;color:var(--green);border:1px solid #86efac}
+.btn-warning{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
+.btn-info{background:#e0f2fe;color:#0369a1;border:1px solid #7dd3fc}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn-full{width:100%;justify-content:center}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.error-msg{color:var(--red);font-size:12px;margin-top:6px;padding:8px 10px;background:#fee2e2;border-radius:var(--r);border:1px solid #fca5a5}
-.success-msg{color:var(--green);font-size:12px;margin-top:6px;padding:8px 10px;background:#dcfce7;border-radius:var(--r);border:1px solid #86efac}
-
-/* SETUP SCREEN */
-.setup-wrap{display:flex;align-items:flex-start;justify-content:center;min-height:100vh;background:var(--accent);padding:2rem;overflow-y:auto}
-.setup-card{background:var(--surface);border-radius:var(--r2);padding:2.5rem;width:100%;max-width:600px;margin:auto}
-.setup-card h2{font-size:18px;font-weight:600;color:var(--accent);margin-bottom:.5rem}
-.setup-card p{font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6}
-.step{display:flex;gap:1rem;margin-bottom:1.25rem;align-items:flex-start}
-.step-num{width:28px;height:28px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;margin-top:2px}
-.step-content{flex:1}
-.step-title{font-size:13px;font-weight:600;margin-bottom:4px}
-.step-desc{font-size:12px;color:var(--muted);line-height:1.5}
-.code-box{background:#1a1917;color:#c8a96e;font-family:var(--mono);font-size:12px;padding:12px;border-radius:var(--r);margin-top:8px;line-height:1.6;word-break:break-all}
-.divider{height:1px;background:var(--border);margin:1.5rem 0}
-
-/* TOP BAR */
+.error-msg{color:var(--red);font-size:12px;padding:8px 10px;background:#fee2e2;border-radius:var(--r);border:1px solid #fca5a5;margin-top:6px}
+/* TOPBAR */
 .topbar{background:var(--accent);color:#fff;padding:0 1.5rem;display:flex;align-items:center;gap:1rem;height:52px;flex-shrink:0;position:sticky;top:0;z-index:100}
 .topbar-brand{font-size:14px;font-weight:600;flex:1}
-.topbar-brand span{color:var(--accent2);font-family:var(--mono);font-size:11px;display:block;font-weight:400;opacity:.9}
+.topbar-brand span{color:var(--accent2);font-family:var(--mono);font-size:11px;display:block;font-weight:400}
 .topbar-user{font-size:12px;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:8px}
 .user-badge{width:30px;height:30px;background:var(--accent2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0}
-.sync-indicator{font-size:11px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px}
-.sync-dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0}
 .sync-dot.syncing{background:#f59e0b;animation:pulse .8s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 10px;font-size:12px;border-radius:var(--r);cursor:pointer;font-family:var(--font);transition:background .15s}
-.btn-logout:hover{background:rgba(255,255,255,.2)}
-
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 10px;font-size:12px;border-radius:var(--r);cursor:pointer;font-family:var(--font)}
 /* LAYOUT */
 .layout{display:flex;flex:1;min-height:calc(100vh - 52px)}
-.sidebar{width:210px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:1rem 0;display:flex;flex-direction:column;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.sidebar{width:210px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:1rem 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
 .nav-item{padding:9px 1.25rem;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;border-left:3px solid transparent;transition:all .1s;user-select:none}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
 .nav-item.active{background:#e8f0f8;color:var(--accent);border-left-color:var(--accent);font-weight:500}
 .nav-item i{font-size:17px}
-.nav-section{padding:12px 1.25rem 4px;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:4px}
-.main{flex:1;overflow-y:auto;padding:1.75rem;max-width:1200px}
-
-/* PAGE HEADER */
+.nav-section{padding:12px 1.25rem 4px;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+.main{flex:1;overflow-y:auto;padding:1.75rem;max-width:1300px}
+/* PAGE */
 .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
 .page-title{font-size:20px;font-weight:600;color:var(--accent)}
 .page-subtitle{font-size:12px;color:var(--muted);margin-top:3px}
-
 /* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
-.card-title{font-size:14px;font-weight:600;color:var(--text)}
-
+.card-title{font-size:14px;font-weight:600}
 /* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem}
 .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;font-weight:600}
 .stat-value{font-size:30px;font-weight:600;color:var(--accent);font-family:var(--mono)}
 .stat-sub{font-size:11px;color:var(--muted);margin-top:4px}
-
+/* STATUS */
+.status-badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.sb1{background:#e0f2fe;color:#0369a1}.sb2{background:#fef9c3;color:#854d0e}.sb3{background:#fef3c7;color:#92400e}
+.sb4{background:#fce7f3;color:#9d174d}.sb5{background:#f3e8ff;color:#6b21a8}.sb6{background:#dbeafe;color:#1e40af}
+.sb7{background:#dcfce7;color:#166534}.sb8{background:#1a3a5c;color:#fff}
+/* PIPELINE */
+.pipeline{display:flex;overflow-x:auto;border-radius:var(--r2);border:1px solid var(--border);overflow:hidden;margin-bottom:1.5rem}
+.pipe-step{flex:1;min-width:90px;padding:.75rem .5rem;text-align:center;font-size:11px;font-weight:600;cursor:pointer;border-right:1px solid var(--border)}
+.pipe-step:last-child{border-right:none}
+.pipe-step .pipe-count{font-size:22px;font-weight:700;font-family:var(--mono);display:block;margin-bottom:2px}
+.pipe-step.active{outline:3px solid var(--accent);outline-offset:-3px;z-index:1}
 /* TABLE */
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);background:var(--surface2);white-space:nowrap}
-td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#fafaf8}
 .proto-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);background:#e8f0f8;padding:3px 8px;border-radius:4px;white-space:nowrap}
 .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;display:inline-block}
-.badge-compra{background:#dbeafe;color:#1e40af}
-.badge-rural{background:#dcfce7;color:#166534}
-.badge-divorcio{background:#fce7f3;color:#9d174d}
-.badge-inventario{background:#fef3c7;color:#92400e}
-.badge-doacao{background:#f3e8ff;color:#6b21a8}
-.badge-testamento{background:#ffedd5;color:#9a3412}
-.badge-supervisor{background:#fef3c7;color:#92400e}
-.badge-escrevente{background:#dbeafe;color:#1e40af}
-
+.badge-compra{background:#dbeafe;color:#1e40af}.badge-rural{background:#dcfce7;color:#166534}
+.badge-divorcio{background:#fce7f3;color:#9d174d}.badge-inventario{background:#fef3c7;color:#92400e}
+.badge-doacao{background:#f3e8ff;color:#6b21a8}.badge-testamento{background:#ffedd5;color:#9a3412}
+.badge-sup{background:#fef3c7;color:#92400e}.badge-esc{background:#dbeafe;color:#1e40af}
+/* ALERTS */
+.alert{padding:.75rem 1rem;border-radius:var(--r);font-size:12px;display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.75rem}
+.alert-warning{background:#fef9c3;border:1px solid #fde047;color:#854d0e}
+.alert-danger{background:#fee2e2;border:1px solid #fca5a5;color:var(--red)}
+.alert-info{background:#e0f2fe;border:1px solid #7dd3fc;color:#0369a1}
+.notif-badge{background:var(--red);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-left:4px}
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-start;justify-content:center;z-index:1000;padding:1.5rem;overflow-y:auto}
-.modal{background:var(--surface);border-radius:var(--r2);width:100%;max-width:820px;box-shadow:0 25px 80px rgba(0,0,0,.35);margin:auto}
+.modal{background:var(--surface);border-radius:var(--r2);width:100%;max-width:860px;box-shadow:0 25px 80px rgba(0,0,0,.35);margin:auto}
 .modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;position:sticky;top:0;background:var(--surface);border-radius:var(--r2) var(--r2) 0 0;z-index:2}
 .modal-title{font-size:16px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .modal-body{padding:1.5rem;max-height:calc(100vh - 200px);overflow-y:auto}
 .modal-footer{padding:1.25rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:.75rem;justify-content:flex-end;flex-wrap:wrap}
-.close-btn{background:none;border:none;cursor:pointer;font-size:22px;color:var(--muted);line-height:1;padding:2px 4px;border-radius:4px;flex-shrink:0}
-.close-btn:hover{background:var(--surface2);color:var(--text)}
-
+.close-btn{background:none;border:none;cursor:pointer;font-size:22px;color:var(--muted);line-height:1;padding:2px 4px;border-radius:4px}
+.close-btn:hover{background:var(--surface2)}
 /* FORM */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
 .col-span-2{grid-column:span 2}
-.section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:1.25rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
-
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);padding:.5rem .75rem;background:#e8f0f8;border-radius:var(--r);margin:1rem 0 .75rem;display:flex;align-items:center;gap:.5rem}
+/* PARTES (múltiplos vendedores/compradores) */
+.parte-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem;margin-bottom:.5rem;align-items:end;padding:.75rem;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border)}
+.parte-row .field{margin-bottom:0}
+.parte-row .field label{font-size:10px}
+.parte-num{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.35rem;display:block}
 /* CHECKLIST */
 .checklist-section{margin-bottom:1.25rem}
-.checklist-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:.75rem;padding:6px 10px;background:#e8f0f8;border-radius:var(--r);display:flex;align-items:center;justify-content:space-between}
+.cl-sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);padding:6px 10px;background:#e8f0f8;border-radius:var(--r);display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
 .check-item{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border-radius:var(--r);cursor:pointer;transition:background .1s}
 .check-item:hover{background:var(--surface2)}
 .check-item input[type=checkbox]{width:15px;height:15px;flex-shrink:0;margin-top:1px;accent-color:var(--accent);cursor:pointer}
 .check-item label{cursor:pointer;line-height:1.5;font-size:13px}
 .check-item.checked label{text-decoration:line-through;color:var(--muted)}
-.checklist-progress{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;background:var(--surface2);padding:.75rem 1rem;border-radius:var(--r2)}
-.progress-bar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
-.progress-fill{height:100%;background:var(--green);border-radius:4px;transition:width .4s ease}
-.progress-text{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
-
+.prog-wrap{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;background:var(--surface2);padding:.75rem 1rem;border-radius:var(--r2)}
+.prog-bar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:4px;transition:width .4s}
 /* COMMENTS */
 .comment{padding:.875rem;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border);margin-bottom:.75rem}
 .comment-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;gap:.5rem;flex-wrap:wrap}
 .comment-author{font-size:12px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px}
 .comment-date{font-size:11px;color:var(--muted)}
 .comment-text{font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
-.comment-input-area{display:flex;gap:.75rem;margin-top:1rem;align-items:flex-end}
-.comment-input-area textarea{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--font);font-size:13px;resize:none;height:70px}
-.comment-input-area textarea:focus{border-color:var(--accent);outline:none}
-
+.comment-box{display:flex;gap:.75rem;margin-top:1rem;align-items:flex-end}
+.comment-box textarea{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--font);font-size:13px;resize:none;height:70px}
+.comment-box textarea:focus{border-color:var(--accent);outline:none}
 /* FILTERS */
 .filters{display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center}
 .search-box{flex:1;min-width:200px;position:relative}
 .search-box input{width:100%;padding:8px 12px 8px 36px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;background:var(--surface)}
 .search-box i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none}
 .filter-select{padding:8px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;background:var(--surface);color:var(--text);cursor:pointer}
-
-/* PRINT COVER */
-@media print {
-  .no-print{display:none!important}
-  .modal-overlay{position:static;background:none;padding:0;overflow:visible}
-  .modal{box-shadow:none;max-width:100%;border:none}
-  .modal-header,.modal-footer,#editableFields{display:none!important}
-  .modal-body{max-height:none;padding:0;overflow:visible}
-  body{background:white}
-}
-.cover-preview{background:white;border:1px solid #ccc;border-radius:var(--r2);padding:1.75rem;color:#000;max-width:100%}
+.filter-date{padding:8px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;background:var(--surface);color:var(--text)}
+/* COVER */
+@media print{.no-print{display:none!important}.modal-overlay{position:static;background:none;padding:0}.modal{box-shadow:none;max-width:100%;border:none}.modal-header,.modal-footer,#editableFields{display:none!important}.modal-body{max-height:none;padding:0;overflow:visible}body{background:white}}
+.cover-preview{background:white;border:1px solid #ccc;border-radius:var(--r2);padding:1.75rem;color:#000}
 .cover-header{text-align:center;border-bottom:2px solid #1a3a5c;padding-bottom:1rem;margin-bottom:1rem}
 .cover-header h2{font-size:15px;color:#1a3a5c;font-weight:700;margin-bottom:3px}
 .cover-header p{font-size:11px;color:#555;margin-top:2px}
@@ -192,1310 +165,496 @@ tr:hover td{background:#fafaf8}
 .cover-docs{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.75rem}
 .cover-footer{margin-top:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;padding-top:1rem;border-top:1px solid #ccc}
 .cover-sig{text-align:center;padding-top:2rem;border-top:1px solid #333;font-size:10px;color:#333;margin-top:.5rem}
-
 /* PRODUCTIVITY */
 .prod-bar{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
 .prod-name{width:150px;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
 .prod-bar-wrap{flex:1;height:20px;background:var(--surface2);border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
-.prod-bar-fill{height:100%;background:var(--accent);border-radius:var(--r);display:flex;align-items:center;padding-left:8px;transition:width .5s ease;min-width:0}
+.prod-bar-fill{height:100%;background:var(--accent);border-radius:var(--r);display:flex;align-items:center;padding-left:8px;transition:width .5s}
 .prod-bar-fill span{font-size:11px;color:#fff;font-weight:600;white-space:nowrap}
 .prod-count{font-size:13px;font-family:var(--mono);font-weight:600;color:var(--accent);width:30px;text-align:right;flex-shrink:0}
-
 /* TABS */
-.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:1.25rem;overflow-x:auto}
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1.25rem;overflow-x:auto}
 .tab{padding:8px 18px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;user-select:none}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .tab:hover:not(.active){color:var(--text);background:var(--surface2)}
-
 /* CHECKLIST EDITOR */
 .cl-item-row{display:flex;align-items:center;gap:.5rem;padding:5px 6px;background:var(--surface2);border-radius:var(--r);margin-bottom:4px}
 .cl-item-row input{flex:1;border:1px solid var(--border);border-radius:4px;padding:5px 8px;font-size:12px;font-family:var(--font)}
-
-/* LOADING */
-.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--accent);color:#fff;gap:1rem}
-.loading-screen i{font-size:48px;animation:spin 1s linear infinite;opacity:.8}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-
+/* HISTORY */
+.history-item{display:flex;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border);font-size:12px}
+.history-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:3px}
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-header{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
+.cal-dow{text-align:center;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0}
+.cal-day{min-height:60px;padding:4px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);font-size:11px}
+.cal-day.today{background:#e8f0f8;border-color:var(--accent)}
+.cal-day.other-month{background:var(--surface2);opacity:.5}
+.cal-day-num{font-weight:600;font-size:12px;margin-bottom:3px;display:block}
+.cal-event{background:var(--accent);color:#fff;border-radius:3px;padding:1px 5px;font-size:10px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-event.assina{background:var(--green)}
+/* NOTIF */
+.notif-item{padding:.75rem;border-radius:var(--r);border:1px solid var(--border);margin-bottom:.5rem;display:flex;gap:.75rem;align-items:flex-start}
+.notif-item.danger{border-color:#fca5a5;background:#fee2e2}
+.notif-item.warning{border-color:#fde047;background:#fef9c3}
+.notif-item.info{border-color:#7dd3fc;background:#e0f2fe}
 /* UTILS */
 .flex{display:flex}.gap-sm{gap:.5rem}.gap-md{gap:.75rem}.items-center{align-items:center}.justify-between{justify-content:space-between}.flex-wrap{flex-wrap:wrap}
 .text-muted{color:var(--muted)}.text-sm{font-size:12px}.text-xs{font-size:11px}.fw-600{font-weight:600}
-.mt-sm{margin-top:.5rem}.mt-md{margin-top:1rem}.mt-lg{margin-top:1.5rem}.mb-sm{margin-bottom:.5rem}.mb-md{margin-bottom:1rem}
-.divider-line{height:1px;background:var(--border);margin:1rem 0}
-.tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:500}
+.mt-sm{margin-top:.5rem}.mt-md{margin-top:1rem}.mb-sm{margin-bottom:.5rem}.mb-md{margin-bottom:1rem}
+.divider{height:1px;background:var(--border);margin:1rem 0}
 .empty-state{text-align:center;padding:3rem;color:var(--muted)}
 .empty-state i{font-size:40px;display:block;margin-bottom:.75rem;opacity:.4}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--accent);color:#fff;padding:.75rem 1.25rem;border-radius:var(--r2);font-size:13px;z-index:9999;display:flex;align-items:center;gap:.5rem;box-shadow:0 8px 30px rgba(0,0,0,.25);animation:slideIn .3s ease}
 @keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--accent);color:#fff;gap:1rem}
+.stale-badge{background:#fee2e2;color:var(--red);border-radius:4px;font-size:10px;padding:2px 6px;font-weight:600}
+/* PARTE TAG */
+.parte-tag{display:inline-flex;align-items:center;gap:4px;background:#e8f0f8;border:1px solid #bfdbfe;border-radius:4px;padding:3px 8px;font-size:11px;margin:2px}
+.parte-tag strong{color:var(--accent)}
+.parte-tag span{color:var(--muted)}
 </style>
 </head>
 <body>
-
 <div id="app">
-  <div class="loading-screen">
-    <i class="ti ti-scale"></i>
-    <div style="font-size:20px;font-weight:600">1º Tabelionato de Notas de Marabá</div>
-    <div style="font-size:13px;opacity:.7">Conectando ao sistema...</div>
-  </div>
+  <div class="loading-screen"><div style="font-size:48px">⚖</div><div style="font-size:18px;font-weight:600">1º Tabelionato de Notas de Marabá</div><div style="font-size:13px;opacity:.7">Carregando sistema...</div></div>
 </div>
-
 <script>
-// ============================================================
-// CONFIGURAÇÃO FIREBASE
-// ============================================================
-// INSTRUÇÕES: Substitua os valores abaixo pelos do seu projeto Firebase.
-// Veja o passo a passo no arquivo INSTRUCOES_FIREBASE.txt
+const FIREBASE_CONFIG={apiKey:"AIzaSyDTWQhhjKg5-aBagrNR3fJyfT_NkFELgr8",authDomain:"cartorio-maraba.firebaseapp.com",projectId:"cartorio-maraba",storageBucket:"cartorio-maraba.firebasestorage.app",messagingSenderId:"167005854799",appId:"1:167005854799:web:92f7d786b095bd2f42de3a"};
 
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDTWQhhjKg5-aBagrNR3fJyfT_NkFELgr8",
-  authDomain: "cartorio-maraba.firebaseapp.com",
-  projectId: "cartorio-maraba",
-  storageBucket: "cartorio-maraba.firebasestorage.app",
-  messagingSenderId: "167005854799",
-  appId: "1:167005854799:web:92f7d786b095bd2f42de3a"
-};
-
-// ============================================================
-// DADOS PADRÃO
-// ============================================================
-const DEFAULT_CHECKLISTS = {
-  "compra_venda_urbano": {
-    name: "Escritura de Compra e Venda (Imóvel Urbano)",
-    sections: [
-      { title: "Vendedor(es) — Pessoa Física", items: [
-        "CNH/RG e CPF dos vendedores e cônjuges",
-        "Certidão de estado civil atualizada (menos de 90 dias)",
-        "Pacto antenupcial — se houver e não averbado",
-        "Procuração pública — se houver"
-      ]},
-      { title: "Comprador(es) — Pessoa Física", items: [
-        "CNH/RG e CPF dos compradores e cônjuges",
-        "Certidão de estado civil atualizada (menos de 90 dias)",
-        "Comprovante de residência",
-        "Pacto antenupcial — se houver",
-        "Procuração pública — se houver"
-      ]},
-      { title: "Documentos do Imóvel", items: [
-        "Guia de ITBI e comprovante de pagamento",
-        "Ofício ou alvará e parecer jurídico",
-        "Certidão de valor venal (Município / SIAT)",
-        "Certidão de inteiro teor da matrícula (menos de 30 dias)",
-        "Certidão de ônus reais (menos de 30 dias)"
-      ]},
-      { title: "Certidões em Nome dos Vendedores", items: [
-        "Certidão negativa — Fazenda Estadual",
-        "Certidão negativa — Fazenda Federal (tributos e dívida ativa)",
-        "Certidão negativa — Fazenda Municipal",
-        "Certidão de ações cíveis — Justiça Federal",
-        "Certidão de ações cíveis — Justiça Estadual",
-        "Certidão de ações trabalhistas — TRT",
-        "Certidão de débitos trabalhistas (TST)"
-      ]}
-    ]
-  },
-  "compra_venda_rural": {
-    name: "Escritura de Compra e Venda (Imóvel Rural)",
-    sections: [
-      { title: "Documentos das Partes", items: [
-        "CNH/RG e CPF dos outorgantes e cônjuges",
-        "Certidão de estado civil atualizada (menos de 90 dias)",
-        "Pacto antenupcial — se houver"
-      ]},
-      { title: "Documentos do Imóvel Rural", items: [
-        "Traslado da escritura em via original",
-        "Certidão de inteiro teor da matrícula (menos de 30 dias)",
-        "CCIR mais recente (INCRA) + comprovante de quitação",
-        "DIAC/DIAT/ITR do último exercício",
-        "Certidão negativa de débitos — tributos federais e dívida ativa (Imóvel Rural)",
-        "5 últimos DARFs do ITR (se CND não puder ser emitida)",
-        "Recibo de inscrição no CAR",
-        "Guia de ITBI e comprovante de pagamento",
-        "Laudêmio — se enfiteuse ou aforamento",
-        "Georreferenciamento INCRA/SIGEF — se não averbado",
-        "ART/TRT do levantamento topográfico (quitado)",
-        "Declaração conjunta proprietário + técnico (divisas)"
-      ]}
-    ]
-  },
-  "divorcio": {
-    name: "Escritura Pública de Divórcio",
-    sections: [
-      { title: "Documentos dos Cônjuges", items: [
-        "Certidão de casamento (menos de 90 dias)",
-        "Documento de identidade oficial de ambos os cônjuges",
-        "CPF de ambos os cônjuges",
-        "Pacto antenupcial e registro imobiliário — se houver",
-        "Cédula OAB do(a) advogado(a)"
-      ]},
-      { title: "Bens, Filhos e Outros", items: [
-        "Certidão de nascimento/identidade dos filhos maiores e capazes — se houver",
-        "Certidão de inteiro teor da matrícula dos imóveis — se houver",
-        "CRV dos veículos — se houver",
-        "Documentos dos bens móveis — se houver",
-        "Comprovante de recolhimento de tributo — se houver transferência patrimonial",
-        "Procuração pública (prazo 30 dias) — se houver representação"
-      ]}
-    ]
-  },
-  "inventario_capazes": {
-    name: "Inventário Extrajudicial — Herdeiros Capazes",
-    sections: [
-      { title: "Documentos do Falecido", items: [
-        "Certidão de óbito",
-        "Documento de identidade oficial",
-        "CPF",
-        "Certidão de nascimento (solteiro) ou certidão de casamento",
-        "Escritura de união estável — se houver",
-        "Pacto antenupcial — se houver"
-      ]},
-      { title: "Documentos dos Herdeiros", items: [
-        "Documento de identidade oficial de todos os herdeiros",
-        "CPF de todos os herdeiros",
-        "Pacto antenupcial dos herdeiros casados — se houver",
-        "Cédula OAB do(a) advogado(a)"
-      ]},
-      { title: "Documentos Tributários e Fiscais", items: [
-        "Guia DARF do ITCMD",
-        "Comprovante de pagamento do ITCMD (SEFAZ-PA)",
-        "Laudo de avaliação da SEFAZ para ITCMD",
-        "Certidões negativas — Fazendas Federal, Estadual e Municipal",
-        "Certidão de débitos trabalhistas (TST)",
-        "Certidões de feitos ajuizados — Justiça Federal, Estadual e TRT"
-      ]},
-      { title: "Imóveis Urbanos — se houver", items: [
-        "Certidão de inteiro teor da matrícula (menos de 30 dias)",
-        "Certidão de ônus reais (menos de 30 dias)",
-        "Certidão de valor venal (Município / SIAT)"
-      ]},
-      { title: "Imóveis Rurais — se houver", items: [
-        "CCIR mais recente + comprovante de quitação",
-        "Certidão negativa de débitos ITR ou 5 últimos ITRs",
-        "Recibo de inscrição no CAR",
-        "Georreferenciamento INCRA/SIGEF — se não averbado"
-      ]}
-    ]
-  },
-  "inventario_incapaz": {
-    name: "Inventário Extrajudicial — Com Menor ou Incapaz",
-    sections: [
-      { title: "Documentos do Falecido", items: [
-        "Certidão de óbito",
-        "Documento de identidade oficial",
-        "CPF",
-        "Certidão de nascimento (solteiro) ou certidão de casamento",
-        "Escritura de união estável — se houver",
-        "Pacto antenupcial — se houver"
-      ]},
-      { title: "Documentos dos Herdeiros e Incapaz", items: [
-        "Documento de identidade de todos os herdeiros",
-        "CPF de todos os herdeiros",
-        "Certidão de nascimento do herdeiro menor",
-        "Certidão de nascimento/casamento do incapaz com registro de interdição",
-        "Termo de nomeação do curador (Juízo competente)",
-        "Documento de identidade do curador (CPF, RG, filiação)",
-        "Cédula OAB do(a) advogado(a)",
-        "Manifestação favorável do Ministério Público"
-      ]},
-      { title: "Documentos Tributários", items: [
-        "Guia DARF do ITCMD",
-        "Comprovante de pagamento do ITCMD (SEFAZ-PA)",
-        "Laudo de avaliação da SEFAZ para ITCMD",
-        "Certidões negativas — Fazendas Federal, Estadual e Municipal",
-        "Certidões de feitos ajuizados (Federal, Estadual, TRT)",
-        "Certidão de débitos trabalhistas (TST)"
-      ]},
-      { title: "Imóveis Urbanos — se houver", items: [
-        "Certidão de inteiro teor da matrícula (menos de 30 dias)",
-        "Certidão de ônus reais (menos de 30 dias)",
-        "Espelho Cálculo SIAT (Marabá) ou certidão de valor venal"
-      ]}
-    ]
-  },
-  "doacao_urbano": {
-    name: "Escritura de Doação de Imóvel Urbano",
-    sections: [
-      { title: "Documentos dos Outorgantes", items: [
-        "CNH/RG e CPF + comprovante de endereço",
-        "Certidão de casamento (menos de 90 dias) — se casados",
-        "Certidão de nascimento (menos de 90 dias) — se solteiros"
-      ]},
-      { title: "Documentos do Imóvel e Tributos", items: [
-        "Comprovante de pagamento do imposto de transmissão (ITCD)",
-        "Laudo de avaliação do Estado (SEFAZ) para cálculo do ITCD",
-        "Declaração de Bens e Direitos + Certidão de Pagamento de Desoneração (SEFAZ)",
-        "Certidão de inteiro teor da matrícula com ônus reais (menos de 30 dias)",
-        "Certidão de baixa de cláusula resolutiva — se for o caso"
-      ]},
-      { title: "Certidões dos Transmitentes", items: [
-        "Certidão negativa — tributos federais e dívida ativa da União",
-        "Certidão negativa — Fazenda Estadual",
-        "Certidão negativa — Fazenda Municipal",
-        "Certidão de feitos ajuizados — Justiça Federal",
-        "Certidão de feitos ajuizados — Justiça Estadual",
-        "Certidão de feitos ajuizados — Justiça do Trabalho",
-        "Certidão de débitos trabalhistas (TST)"
-      ]}
-    ]
-  },
-  "testamento": {
-    name: "Testamento Público",
-    sections: [
-      { title: "Documentos do Testador", items: [
-        "Documento de identidade oficial (RG/CNH)",
-        "CPF",
-        "Certidão de estado civil atualizada (menos de 90 dias)",
-        "Comprovante de residência"
-      ]},
-      { title: "Testemunhas — 2 necessárias", items: [
-        "Documento de identidade das 2 testemunhas",
-        "CPF das 2 testemunhas",
-        "Presença das testemunhas no ato"
-      ]}
-    ]
-  }
-};
-
-const NATUREZAS = [
-  {key:"compra_venda_urbano", label:"Compra e Venda — Urbano", badge:"badge-compra"},
-  {key:"compra_venda_rural",  label:"Compra e Venda — Rural",  badge:"badge-rural"},
-  {key:"divorcio",            label:"Divórcio",                badge:"badge-divorcio"},
-  {key:"inventario_capazes",  label:"Inventário — Herdeiros Capazes", badge:"badge-inventario"},
-  {key:"inventario_incapaz",  label:"Inventário — Com Menor/Incapaz", badge:"badge-inventario"},
-  {key:"doacao_urbano",       label:"Doação de Imóvel Urbano", badge:"badge-doacao"},
-  {key:"testamento",          label:"Testamento Público",      badge:"badge-testamento"}
+const STATUSES=[
+  {key:"cadastrado",label:"Cadastrado",cls:"sb1",icon:"ti-file-plus",step:1},
+  {key:"para_minutar",label:"Para Minutar",cls:"sb2",icon:"ti-inbox",step:2},
+  {key:"minutando",label:"Minutando",cls:"sb3",icon:"ti-writing",step:3},
+  {key:"para_conferir",label:"Para Conferir",cls:"sb4",icon:"ti-eye",step:4},
+  {key:"conferindo",label:"Conferindo",cls:"sb5",icon:"ti-checkup-list",step:5},
+  {key:"aguard_assinatura",label:"Aguard. Assinatura",cls:"sb6",icon:"ti-signature",step:6},
+  {key:"assinado",label:"Assinado",cls:"sb7",icon:"ti-circle-check",step:7},
+  {key:"registro",label:"Em Registro",cls:"sb8",icon:"ti-building-bank",step:8}
 ];
-
-// ============================================================
-// APP STATE
-// ============================================================
-let db, auth;
-let state = {
-  currentUser: null,
-  page: "dashboard",
-  modal: null,
-  processes: [],
-  users: [],
-  checklists: JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS)),
-  selectedProcess: null,
-  activeTab: "dados",
-  search: "",
-  filterNatureza: "",
-  editingChecklist: null,
-  syncing: false,
-  unsubProcesses: null,
-  firebaseConfigured: false
+const CONF_ROLES=['escrevente','supervisor'];
+const NATUREZAS=[
+  {key:"compra_venda_urbano",label:"Compra e Venda — Urbano",badge:"badge-compra"},
+  {key:"compra_venda_rural",label:"Compra e Venda — Rural",badge:"badge-rural"},
+  {key:"divorcio",label:"Divórcio",badge:"badge-divorcio"},
+  {key:"inventario_capazes",label:"Inventário — Herdeiros Capazes",badge:"badge-inventario"},
+  {key:"inventario_incapaz",label:"Inventário — Com Menor/Incapaz",badge:"badge-inventario"},
+  {key:"doacao_urbano",label:"Doação de Imóvel Urbano",badge:"badge-doacao"},
+  {key:"testamento",label:"Testamento Público",badge:"badge-testamento"}
+];
+const DEFAULT_CL={
+  "compra_venda_urbano":{name:"Compra e Venda (Urbano)",sections:[
+    {title:"Vendedor(es)",items:["CNH/RG e CPF dos vendedores e cônjuges","Certidão de estado civil atualizada (menos de 90 dias)","Pacto antenupcial — se houver","Procuração pública — se houver"]},
+    {title:"Comprador(es)",items:["CNH/RG e CPF dos compradores e cônjuges","Certidão de estado civil atualizada (menos de 90 dias)","Comprovante de residência","Pacto antenupcial — se houver","Procuração pública — se houver"]},
+    {title:"Documentos do Imóvel",items:["Guia de ITBI e comprovante de pagamento","Ofício ou alvará e parecer jurídico","Certidão de valor venal (Município / SIAT)","Certidão de inteiro teor da matrícula (menos de 30 dias)","Certidão de ônus reais (menos de 30 dias)"]},
+    {title:"Certidões dos Vendedores",items:["Certidão negativa — Fazenda Estadual","Certidão negativa — Fazenda Federal","Certidão negativa — Fazenda Municipal","Certidão de ações cíveis — Justiça Federal","Certidão de ações cíveis — Justiça Estadual","Certidão de ações trabalhistas — TRT","Certidão de débitos trabalhistas (TST)"]}
+  ]},
+  "compra_venda_rural":{name:"Compra e Venda (Rural)",sections:[
+    {title:"Documentos das Partes",items:["CNH/RG e CPF dos outorgantes e cônjuges","Certidão de estado civil atualizada (menos de 90 dias)","Pacto antenupcial — se houver"]},
+    {title:"Documentos do Imóvel Rural",items:["Traslado da escritura em via original","Certidão de inteiro teor da matrícula (menos de 30 dias)","CCIR mais recente + comprovante de quitação","DIAC/DIAT/ITR do último exercício","Certidão negativa de débitos — tributos federais","5 últimos DARFs do ITR (se CND não puder ser emitida)","Recibo de inscrição no CAR","Guia de ITBI e comprovante de pagamento","Laudêmio — se enfiteuse ou aforamento","Georreferenciamento INCRA/SIGEF — se não averbado","ART/TRT do levantamento topográfico (quitado)","Declaração conjunta proprietário + técnico (divisas)"]}
+  ]},
+  "divorcio":{name:"Divórcio",sections:[
+    {title:"Documentos dos Cônjuges",items:["Certidão de casamento (menos de 90 dias)","Documento de identidade oficial de ambos","CPF de ambos os cônjuges","Pacto antenupcial e registro imobiliário — se houver","Cédula OAB do(a) advogado(a)"]},
+    {title:"Bens e Filhos",items:["Certidão de nascimento/identidade dos filhos maiores — se houver","Certidão de inteiro teor da matrícula dos imóveis — se houver","CRV dos veículos — se houver","Documentos dos bens móveis — se houver","Comprovante de recolhimento de tributo — se houver transferência","Procuração pública (prazo 30 dias) — se houver representação"]}
+  ]},
+  "inventario_capazes":{name:"Inventário — Herdeiros Capazes",sections:[
+    {title:"Documentos do Falecido",items:["Certidão de óbito","Documento de identidade oficial","CPF","Certidão de nascimento (solteiro) ou certidão de casamento","Escritura de união estável — se houver","Pacto antenupcial — se houver"]},
+    {title:"Documentos dos Herdeiros",items:["Documento de identidade de todos os herdeiros","CPF de todos os herdeiros","Pacto antenupcial dos herdeiros casados — se houver","Cédula OAB do(a) advogado(a)"]},
+    {title:"Tributários",items:["Guia DARF do ITCMD","Comprovante de pagamento do ITCMD (SEFAZ-PA)","Laudo de avaliação da SEFAZ para ITCMD","Certidões negativas — Fazendas Federal, Estadual e Municipal","Certidão de débitos trabalhistas (TST)","Certidões de feitos ajuizados — Justiça Federal, Estadual e TRT"]},
+    {title:"Imóveis Urbanos — se houver",items:["Certidão de inteiro teor da matrícula (menos de 30 dias)","Certidão de ônus reais (menos de 30 dias)","Certidão de valor venal (Município / SIAT)"]},
+    {title:"Imóveis Rurais — se houver",items:["CCIR mais recente + comprovante de quitação","Certidão negativa de débitos ITR ou 5 últimos ITRs","Recibo de inscrição no CAR","Georreferenciamento INCRA/SIGEF — se não averbado"]}
+  ]},
+  "inventario_incapaz":{name:"Inventário — Com Menor/Incapaz",sections:[
+    {title:"Documentos do Falecido",items:["Certidão de óbito","Documento de identidade oficial","CPF","Certidão de nascimento (solteiro) ou certidão de casamento","Escritura de união estável — se houver","Pacto antenupcial — se houver"]},
+    {title:"Herdeiros e Incapaz",items:["Documento de identidade de todos os herdeiros","CPF de todos os herdeiros","Certidão de nascimento do herdeiro menor","Certidão de nascimento/casamento do incapaz com registro de interdição","Termo de nomeação do curador","Documento de identidade do curador","Cédula OAB do(a) advogado(a)","Manifestação favorável do Ministério Público"]},
+    {title:"Tributários",items:["Guia DARF do ITCMD","Comprovante de pagamento do ITCMD (SEFAZ-PA)","Laudo de avaliação da SEFAZ para ITCMD","Certidões negativas — Fazendas Federal, Estadual e Municipal","Certidões de feitos ajuizados (Federal, Estadual, TRT)","Certidão de débitos trabalhistas (TST)"]},
+    {title:"Imóveis Urbanos — se houver",items:["Certidão de inteiro teor da matrícula (menos de 30 dias)","Certidão de ônus reais (menos de 30 dias)","Espelho Cálculo SIAT (Marabá) ou certidão de valor venal"]}
+  ]},
+  "doacao_urbano":{name:"Doação de Imóvel Urbano",sections:[
+    {title:"Outorgantes",items:["CNH/RG e CPF + comprovante de endereço","Certidão de casamento (menos de 90 dias) — se casados","Certidão de nascimento (menos de 90 dias) — se solteiros"]},
+    {title:"Imóvel e Tributos",items:["Comprovante de pagamento do ITCD","Laudo de avaliação da SEFAZ para ITCD","Declaração de Bens e Direitos + Certidão de Desoneração (SEFAZ)","Certidão de inteiro teor da matrícula com ônus reais (menos de 30 dias)","Certidão de baixa de cláusula resolutiva — se for o caso"]},
+    {title:"Certidões do Transmitente",items:["Certidão negativa — tributos federais e dívida ativa da União","Certidão negativa — Fazenda Estadual","Certidão negativa — Fazenda Municipal","Certidão de feitos ajuizados — Justiça Federal","Certidão de feitos ajuizados — Justiça Estadual","Certidão de feitos ajuizados — Justiça do Trabalho","Certidão de débitos trabalhistas (TST)"]}
+  ]},
+  "testamento":{name:"Testamento Público",sections:[
+    {title:"Testador",items:["Documento de identidade oficial (RG/CNH)","CPF","Certidão de estado civil atualizada (menos de 90 dias)","Comprovante de residência"]},
+    {title:"Testemunhas",items:["Documento de identidade das 2 testemunhas","CPF das 2 testemunhas","Presença das testemunhas no ato"]}
+  ]}
 };
 
-// ============================================================
-// FIREBASE INIT
-// ============================================================
-function isFirebaseConfigured() {
-  return FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.includes("COLE_AQUI");
-}
+let db;
+// partes temporárias no formulário
+let tmpVendedores=[{nome:'',cpf:''}];
+let tmpCompradores=[{nome:'',cpf:''}];
 
-function initFirebase() {
-  if (!isFirebaseConfigured()) {
-    renderSetupScreen();
-    return;
-  }
-  try {
-    firebase.initializeApp(FIREBASE_CONFIG);
-    db = firebase.firestore();
-    auth = firebase.auth();
-    state.firebaseConfigured = true;
-    loadInitialData();
-  } catch(e) {
-    showError("Erro ao conectar com Firebase: " + e.message);
-  }
-}
+let S={
+  user:null,page:"dashboard",modal:null,
+  processes:[],users:[],checklists:JSON.parse(JSON.stringify(DEFAULT_CL)),
+  selectedProcess:null,activeTab:"dados",
+  search:"",filterNat:"",filterStatus:"",filterDateFrom:"",filterDateTo:"",filterDateField:"dataAbertura",
+  editingCl:null,syncing:false,unsub:null,pipeFilter:null,
+  calYear:new Date().getFullYear(),calMonth:new Date().getMonth()
+};
 
-async function loadInitialData() {
-  document.getElementById('app').innerHTML = `<div class="loading-screen"><i class="ti ti-loader-2"></i><div style="font-size:16px;font-weight:500">Carregando dados...</div></div>`;
-  try {
-    // Load users
-    const usersSnap = await db.collection('users').get();
-    if (usersSnap.empty) {
-      // First time: create default supervisor
-      await db.collection('users').doc('sup1').set({
-        id: 'sup1', name: 'Supervisor', username: 'supervisor',
-        password: 'master123', role: 'supervisor',
-        createdAt: new Date().toISOString()
-      });
-      state.users = [{id:'sup1', name:'Supervisor', username:'supervisor', password:'master123', role:'supervisor', createdAt:new Date().toISOString()}];
-    } else {
-      state.users = usersSnap.docs.map(d => d.data());
-    }
-    // Load checklists
-    const clSnap = await db.collection('config').doc('checklists').get();
-    if (clSnap.exists) state.checklists = clSnap.data().data;
-    else await db.collection('config').doc('checklists').set({data: state.checklists});
-    // Subscribe to processes (real-time)
-    subscribeProcesses();
-  } catch(e) {
-    document.getElementById('app').innerHTML = `<div class="loading-screen"><div style="font-size:16px;font-weight:500;color:#f87171">Erro ao carregar: ${e.message}</div><button onclick="location.reload()" style="margin-top:1rem;padding:8px 20px;border-radius:6px;border:none;cursor:pointer">Tentar novamente</button></div>`;
-  }
-}
+// ── HELPERS ──────────────────────────────────────────────
+const getNat=k=>NATUREZAS.find(n=>n.key===k)||{key:k,label:k,badge:'badge-compra'};
+const getSt=k=>STATUSES.find(s=>s.key===k)||STATUSES[0];
+const getUN=id=>{const u=S.users.find(u=>u.id===id);return u?u.name:(id||'—');};
+const ini=n=>(n||'').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'??';
+const fD=d=>d?new Date(d+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+const fDT=d=>d?new Date(d).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
 
-function subscribeProcesses() {
-  if (state.unsubProcesses) state.unsubProcesses();
-  state.unsubProcesses = db.collection('processes').orderBy('createdAt','desc').onSnapshot(snap => {
-    state.processes = snap.docs.map(d => d.data());
-    if (state.currentUser) {
-      render();
-      if (state.modal === 'ver_processo' && state.selectedProcess) {
-        const updated = state.processes.find(p => p.id === state.selectedProcess.id);
-        if (updated) state.selectedProcess = updated;
-      }
-    } else {
-      renderLogin();
-    }
-  }, err => {
-    console.error('Firestore error:', err);
+// Nomes concatenados para exibição
+function partesNomes(arr){if(!arr||!arr.length)return'—';return arr.map(p=>p.nome).filter(Boolean).join(' e ')||'—';}
+function partesCPFs(arr){if(!arr||!arr.length)return'';return arr.map(p=>p.cpf).filter(Boolean).join(', ');}
+// Busca por nome ou CPF em array de partes
+function partesMatch(arr,s){if(!arr)return false;return arr.some(p=>(p.nome||'').toLowerCase().includes(s)||(p.cpf||'').includes(s));}
+
+function getClProg(p){
+  const cl=S.checklists[p.natureza];if(!cl)return{done:0,total:0,pct:0};
+  let t=0,d=0;cl.sections.forEach((s,si)=>s.items.forEach((_,ii)=>{t++;if(p.checklist&&p.checklist[si]&&p.checklist[si][ii])d++;}));
+  return{done:d,total:t,pct:t?Math.round(d/t*100):0};
+}
+function initCl(nat){const cl=S.checklists[nat];if(!cl)return{};const o={};cl.sections.forEach((_,si)=>{o[si]={};});return o;}
+function genProto(){const ns=S.processes.map(p=>parseInt(p.protocol.replace(/\D/g,''))).filter(n=>!isNaN(n));return String(ns.length?Math.max(...ns)+1:1).padStart(8,'0');}
+function daysIn(p){const d=p.statusHistory&&p.statusHistory.length?p.statusHistory[p.statusHistory.length-1].at:p.createdAt;return Math.floor((Date.now()-new Date(d).getTime())/86400000);}
+function canAdv(p){const c=p.status||'cadastrado';const nx=STATUSES.find(s=>s.step===getSt(c).step+1);if(!nx)return false;if(nx.key==='conferindo'&&!CONF_ROLES.includes(S.user.role))return false;return true;}
+function nextSt(p){const c=getSt(p.status||'cadastrado');return STATUSES.find(s=>s.step===c.step+1)||null;}
+function setSyncing(v){S.syncing=v;const d=document.querySelector('.sync-dot');if(d)d.className='sync-dot'+(v?' syncing':'');const t=document.querySelector('.sync-text');if(t)t.textContent=v?'Salvando...':'Sincronizado';}
+function showToast(msg,type='success'){const e=document.querySelector('.toast');if(e)e.remove();const t=document.createElement('div');t.className='toast';t.innerHTML=`<i class="ti ti-${type==='success'?'check':'alert-triangle'}"></i> ${msg}`;if(type==='error')t.style.background='var(--red)';document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+function getNotifications(){
+  const notifs=[];const today=new Date();today.setHours(0,0,0,0);
+  S.processes.forEach(p=>{
+    if(p.status==='registro')return;
+    const days=daysIn(p);
+    if(days>5)notifs.push({type:'danger',proto:p.protocol,id:p.id,msg:`Parado há ${days} dias na etapa "${getSt(p.status||'cadastrado').label}"`});
+    else if(days>2)notifs.push({type:'warning',proto:p.protocol,id:p.id,msg:`${days} dias na etapa "${getSt(p.status||'cadastrado').label}"`});
+    if(p.dataAssinatura){const diff=Math.ceil((new Date(p.dataAssinatura+'T12:00:00')-today)/86400000);if(diff>=0&&diff<=3)notifs.push({type:'info',proto:p.protocol,id:p.id,msg:`Assinatura em ${diff===0?'hoje':`${diff} dia(s)`} — ${partesNomes(p.vendedores)}`});}
   });
+  return notifs;
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
-function getNaturezaInfo(key) {
-  return NATUREZAS.find(n => n.key === key) || {key, label: key, badge:"badge-compra"};
+// ── FIREBASE ─────────────────────────────────────────────
+function init(){
+  try{firebase.initializeApp(FIREBASE_CONFIG);db=firebase.firestore();loadData();}
+  catch(e){document.getElementById('app').innerHTML=`<div class="loading-screen"><div style="color:#f87171">Erro: ${e.message}</div></div>`;}
 }
-
-function getChecklistProgress(process) {
-  if (!process.checklist) return {done:0, total:0, pct:0};
-  const cl = state.checklists[process.natureza];
-  if (!cl) return {done:0, total:0, pct:0};
-  let total=0, done=0;
-  cl.sections.forEach((s,si) => s.items.forEach((_,ii) => {
-    total++;
-    if (process.checklist[si] && process.checklist[si][ii]) done++;
-  }));
-  return {done, total, pct: total ? Math.round(done/total*100) : 0};
+async function loadData(){
+  try{
+    const us=await db.collection('users').get();
+    if(us.empty){const sup={id:'sup1',name:'Supervisor',username:'supervisor',password:'master123',role:'supervisor',createdAt:new Date().toISOString()};await db.collection('users').doc('sup1').set(sup);S.users=[sup];}
+    else S.users=us.docs.map(d=>d.data());
+    const cs=await db.collection('config').doc('checklists').get();
+    if(cs.exists)S.checklists=cs.data().data;else await db.collection('config').doc('checklists').set({data:S.checklists});
+    subProc();
+  }catch(e){document.getElementById('app').innerHTML=`<div class="loading-screen"><div style="color:#f87171">Erro: ${e.message}</div></div>`;}
 }
+function subProc(){if(S.unsub)S.unsub();S.unsub=db.collection('processes').orderBy('createdAt','desc').onSnapshot(snap=>{S.processes=snap.docs.map(d=>d.data());render();});}
 
-function getUserName(id) {
-  const u = state.users.find(u=>u.id===id);
-  return u ? u.name : (id || 'Desconhecido');
-}
+// ── RENDER ────────────────────────────────────────────────
+function render(){const app=document.getElementById('app');if(!app)return;if(!S.user){app.innerHTML=loginHTML();bindLogin();return;}app.innerHTML=appHTML();bindApp();if(S.modal)renderModal();}
+function loginHTML(){return `<div class="login-wrap"><div class="login-card"><div class="login-logo"><div class="seal"><i class="ti ti-scale"></i></div><h1>1º Tabelionato de Notas<br>e Registro de Imóveis</h1><p>Marabá — Pará</p></div><div class="field"><label>Usuário</label><input id="lU" type="text" autocomplete="username"></div><div class="field"><label>Senha</label><input id="lP" type="password" autocomplete="current-password"></div><div id="lE"></div><div style="margin-top:1.25rem"><button class="btn btn-primary btn-full" id="btnLogin"><i class="ti ti-login"></i> Entrar</button></div><div style="text-align:center;margin-top:1rem;font-size:11px;color:var(--muted)">v4.0 — Múltiplas Partes</div></div></div>`;}
+function bindLogin(){const go=()=>{const u=document.getElementById('lU').value.trim();const p=document.getElementById('lP').value;const user=S.users.find(x=>x.username===u&&x.password===p);if(user){S.user=user;render();}else document.getElementById('lE').innerHTML='<div class="error-msg"><i class="ti ti-alert-triangle"></i> Usuário ou senha incorretos.</div>';};document.getElementById('btnLogin').onclick=go;document.getElementById('lP').onkeydown=e=>{if(e.key==='Enter')go();};document.getElementById('lU').focus();}
 
-function initChecklist(natureza) {
-  const cl = state.checklists[natureza];
-  if (!cl) return {};
-  const obj = {};
-  cl.sections.forEach((_,si) => { obj[si] = {}; });
-  return obj;
-}
-
-function generateProto() {
-  const nums = state.processes.map(p => parseInt(p.protocol.replace(/\D/g,''))).filter(n=>!isNaN(n));
-  const next = nums.length ? Math.max(...nums) + 1 : 1;
-  return String(next).padStart(8, '0');
-}
-
-function showToast(msg, type='success') {
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.innerHTML = `<i class="ti ti-${type==='success'?'check':'alert-triangle'}" aria-hidden="true"></i> ${msg}`;
-  if (type==='error') t.style.background='var(--red)';
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
-}
-
-function initials(name) {
-  return (name||'').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() || '??';
-}
-
-// ============================================================
-// RENDER
-// ============================================================
-function render() {
-  const app = document.getElementById('app');
-  if (!app) return;
-  if (!state.currentUser) { app.innerHTML = renderLoginHTML(); bindLogin(); return; }
-  app.innerHTML = renderAppHTML();
-  bindApp();
-  if (state.modal) { renderModal(); }
-}
-
-function renderLogin() {
-  document.getElementById('app').innerHTML = renderLoginHTML();
-  bindLogin();
-}
-
-function renderLoginHTML() {
-  return `<div class="login-wrap">
-    <div class="login-card">
-      <div class="login-logo">
-        <div class="seal"><i class="ti ti-scale" aria-hidden="true"></i></div>
-        <h1>1º Tabelionato de Notas<br>e Registro de Imóveis</h1>
-        <p>Marabá — Pará</p>
-      </div>
-      <div class="field"><label>Usuário</label><input id="lUser" type="text" placeholder="seu.usuario" autocomplete="username"></div>
-      <div class="field"><label>Senha</label><input id="lPass" type="password" placeholder="••••••" autocomplete="current-password"></div>
-      <div id="lErr"></div>
-      <div style="margin-top:1.25rem">
-        <button class="btn btn-primary btn-full" id="btnLogin"><i class="ti ti-login" aria-hidden="true"></i> Entrar no sistema</button>
-      </div>
-      <div style="text-align:center;margin-top:1rem;font-size:11px;color:var(--muted)">Sistema de Gestão de Protocolos v1.0</div>
-    </div>
-  </div>`;
-}
-
-function bindLogin() {
-  const doLogin = () => {
-    const u = document.getElementById('lUser').value.trim();
-    const p = document.getElementById('lPass').value;
-    const user = state.users.find(x => x.username===u && x.password===p);
-    if (user) { state.currentUser = user; render(); }
-    else { document.getElementById('lErr').innerHTML = '<div class="error-msg"><i class="ti ti-alert-triangle"></i> Usuário ou senha incorretos.</div>'; }
-  };
-  document.getElementById('btnLogin').onclick = doLogin;
-  document.getElementById('lPass').onkeydown = e => { if(e.key==='Enter') doLogin(); };
-  document.getElementById('lUser').focus();
-}
-
-function renderAppHTML() {
-  const isSup = state.currentUser.role === 'supervisor';
-  return `
-  <div class="topbar no-print">
-    <div class="topbar-brand">1º Tabelionato de Notas e Registro de Imóveis de Marabá<span>Sistema de Gestão de Protocolos</span></div>
-    <div class="sync-indicator"><div class="sync-dot ${state.syncing?'syncing':''}"></div>${state.syncing?'Salvando...':'Sincronizado'}</div>
-    <div class="topbar-user">
-      <div class="user-badge">${initials(state.currentUser.name)}</div>
-      <span>${state.currentUser.name}</span>
-      <button class="btn-logout" id="btnLogout"><i class="ti ti-logout" aria-hidden="true"></i> Sair</button>
-    </div>
+function appHTML(){
+  const sup=S.user.role==='supervisor';const notifs=getNotifications();const nc=notifs.filter(n=>n.type==='danger').length;
+  return `<div class="topbar no-print">
+    <div class="topbar-brand">1º Tabelionato de Notas e Registro de Imóveis de Marabá<span>Sistema de Gestão de Protocolos v4.0</span></div>
+    <div class="flex items-center gap-sm" style="color:rgba(255,255,255,.7);font-size:11px"><div class="sync-dot ${S.syncing?'syncing':''}"></div><span class="sync-text">${S.syncing?'Salvando...':'Sincronizado'}</span></div>
+    <div class="topbar-user"><div class="user-badge">${ini(S.user.name)}</div><span>${S.user.name}</span><span style="font-size:10px;opacity:.6;background:rgba(255,255,255,.1);padding:2px 7px;border-radius:10px">${S.user.role}</span><button class="btn-logout" id="btnLogout"><i class="ti ti-logout"></i> Sair</button></div>
   </div>
   <div class="layout">
     <div class="sidebar no-print">
       <div class="nav-section">Principal</div>
-      ${nav("dashboard","ti-layout-dashboard","Dashboard")}
-      ${nav("processos","ti-file-description","Processos")}
+      ${nav('dashboard','ti-layout-dashboard','Dashboard')}
+      ${nav('processos','ti-file-description','Processos')}
+      ${nav('calendario','ti-calendar','Calendário')}
+      ${nav('notificacoes','ti-bell',`Alertas${nc>0?`<span class="notif-badge">${nc}</span>`:''}`)}
+      <div class="nav-section">Relatórios</div>
+      ${nav('relatorios','ti-chart-bar','Relatórios')}
       <div class="nav-section">Configurações</div>
-      ${nav("checklists","ti-checklist","Checklists")}
-      ${isSup ? nav("usuarios","ti-users","Usuários") : ''}
-      ${isSup ? nav("produtividade","ti-chart-bar","Produtividade") : ''}
+      ${nav('checklists','ti-checklist','Checklists')}
+      ${sup?nav('usuarios','ti-users','Usuários'):''}
+      ${sup?nav('produtividade','ti-trophy','Produtividade'):''}
     </div>
     <div class="main">${renderPage()}</div>
   </div>`;
 }
+function nav(page,icon,label){return `<div class="nav-item${S.page===page?' active':''}" data-page="${page}"><i class="ti ${icon}"></i>${label}</div>`;}
+function renderPage(){switch(S.page){case'dashboard':return renderDash();case'processos':return renderProc();case'calendario':return renderCal();case'notificacoes':return renderNotif();case'relatorios':return renderRel();case'checklists':return renderCL();case'usuarios':return renderUsers();case'produtividade':return renderProd();default:return'';}}
 
-function nav(page, icon, label) {
-  return `<div class="nav-item${state.page===page?' active':''}" data-page="${page}"><i class="ti ${icon}" aria-hidden="true"></i>${label}</div>`;
-}
-
-function renderPage() {
-  switch(state.page) {
-    case 'dashboard':     return renderDashboard();
-    case 'processos':     return renderProcessos();
-    case 'checklists':    return renderChecklists();
-    case 'usuarios':      return renderUsuarios();
-    case 'produtividade': return renderProdutividade();
-    default: return '';
-  }
-}
-
-// ---- DASHBOARD ----
-function renderDashboard() {
-  const total = state.processes.length;
-  const hoje = new Date().toDateString();
-  const hojeCount = state.processes.filter(p => new Date(p.createdAt).toDateString()===hoje).length;
-  const pendentes = state.processes.filter(p => getChecklistProgress(p).pct < 100).length;
-  const completos = total - pendentes;
-  const porNat = {};
-  NATUREZAS.forEach(n => porNat[n.key] = state.processes.filter(p=>p.natureza===n.key).length);
-  const recentes = state.processes.slice(0, 6);
-  return `
-  <div class="page-header"><div>
-    <div class="page-title">Dashboard</div>
-    <div class="page-subtitle">${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
-  </div></div>
+// ── DASHBOARD ─────────────────────────────────────────────
+function renderDash(){
+  const total=S.processes.length;const hoje=new Date().toDateString();
+  const hojeC=S.processes.filter(p=>new Date(p.createdAt).toDateString()===hoje).length;
+  const pSt={};STATUSES.forEach(s=>pSt[s.key]=S.processes.filter(p=>(p.status||'cadastrado')===s.key).length);
+  const notifs=getNotifications();const stale=notifs.filter(n=>n.type==='danger').length;
+  const todayStr=new Date().toISOString().split('T')[0];
+  const assHoje=S.processes.filter(p=>p.dataAssinatura===todayStr);
+  const recentes=S.processes.slice(0,6);
+  return `<div class="page-header"><div><div class="page-title">Dashboard</div><div class="page-subtitle">${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div></div>
+    <button class="btn btn-info btn-sm" id="btnGerarPDF"><i class="ti ti-file-type-pdf"></i> Relatório do dia</button></div>
+  ${stale>0?`<div class="alert alert-danger"><i class="ti ti-alert-triangle"></i> <strong>${stale} alerta(s) crítico(s)!</strong> Veja em Alertas.</div>`:''}
+  ${assHoje.length>0?`<div class="alert alert-info"><i class="ti ti-signature"></i> <strong>${assHoje.length} assinatura(s) hoje:</strong> ${assHoje.map(p=>p.protocol+' — '+partesNomes(p.vendedores)).join(' | ')}</div>`:''}
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Total de protocolos</div><div class="stat-value">${total}</div><div class="stat-sub">processos cadastrados</div></div>
-    <div class="stat-card"><div class="stat-label">Abertos hoje</div><div class="stat-value">${hojeCount}</div><div class="stat-sub">novos protocolos</div></div>
-    <div class="stat-card"><div class="stat-label">Em andamento</div><div class="stat-value">${pendentes}</div><div class="stat-sub">com docs pendentes</div></div>
-    <div class="stat-card"><div class="stat-label">Concluídos</div><div class="stat-value">${completos}</div><div class="stat-sub">documentação completa</div></div>
+    <div class="stat-card"><div class="stat-label">Total de protocolos</div><div class="stat-value">${total}</div><div class="stat-sub">cadastrados</div></div>
+    <div class="stat-card"><div class="stat-label">Abertos hoje</div><div class="stat-value">${hojeC}</div><div class="stat-sub">novos protocolos</div></div>
+    <div class="stat-card"><div class="stat-label">Aguard. Assinatura</div><div class="stat-value">${pSt['aguard_assinatura']||0}</div><div class="stat-sub">prontos para assinar</div></div>
+    <div class="stat-card"><div class="stat-label">Em Registro</div><div class="stat-value">${pSt['registro']||0}</div><div class="stat-sub">fase final</div></div>
+  </div>
+  <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-git-branch" style="color:var(--accent)"></i> Pipeline</div><div class="text-xs text-muted">Clique para filtrar</div></div>
+    <div class="pipeline">${STATUSES.map(s=>`<div class="pipe-step ${s.cls} ${S.pipeFilter===s.key?'active':''}" data-pipe="${s.key}"><span class="pipe-count">${pSt[s.key]||0}</span>${s.label}</div>`).join('')}</div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-    <div class="card">
-      <div class="card-header"><div class="card-title">Processos por natureza</div></div>
-      ${NATUREZAS.map(n=>`<div class="prod-bar">
-        <div class="prod-name text-sm">${n.label.replace(' — ',' ')}</div>
-        <div class="prod-bar-wrap"><div class="prod-bar-fill" style="width:${total&&porNat[n.key]?Math.max(porNat[n.key]/total*100,3):0}%">${porNat[n.key]>0?`<span>${porNat[n.key]}</span>`:''}</div></div>
-        <div class="prod-count">${porNat[n.key]}</div>
-      </div>`).join('')}
+    <div class="card"><div class="card-header"><div class="card-title">Últimos protocolos</div></div>
+      ${recentes.length===0?'<div class="empty-state"><i class="ti ti-inbox"></i>Nenhum processo.</div>':recentes.map(p=>{const s=getSt(p.status||'cadastrado');const days=daysIn(p);return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><div><span class="proto-num" style="display:inline-block;margin-bottom:2px">${p.protocol}</span><div class="text-xs text-muted">${partesNomes(p.vendedores)}</div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px"><span class="status-badge ${s.cls}">${s.label}</span>${days>3?`<span class="stale-badge">⚠ ${days}d</span>`:''}</div></div>`;}).join('')}
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-title">Últimos protocolos</div></div>
-      ${recentes.length===0?'<div class="empty-state"><i class="ti ti-file-off"></i>Nenhum processo cadastrado.</div>':
-        recentes.map(p=>{
-          const n=getNaturezaInfo(p.natureza); const {pct}=getChecklistProgress(p);
-          return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-            <div><div class="proto-num" style="display:inline-block;margin-bottom:3px">${p.protocol}</div><div class="text-xs text-muted">${p.vendedor||'—'} → ${p.comprador||'—'}</div></div>
-            <div style="text-align:right"><span class="badge ${n.badge}" style="font-size:10px">${n.label.split(' — ')[0]}</span><div class="text-xs text-muted" style="margin-top:2px">${pct}% docs</div></div>
-          </div>`;
-        }).join('')
-      }
+    <div class="card"><div class="card-header"><div class="card-title">Por natureza</div></div>
+      ${NATUREZAS.map(n=>{const c=S.processes.filter(p=>p.natureza===n.key).length;return `<div class="prod-bar"><div class="prod-name text-sm">${n.label.split(' — ')[0]}</div><div class="prod-bar-wrap"><div class="prod-bar-fill" style="width:${total&&c?Math.max(c/total*100,3):0}%">${c>0?`<span>${c}</span>`:''}</div></div><div class="prod-count">${c}</div></div>`;}).join('')}
     </div>
   </div>`;
 }
 
-// ---- PROCESSOS ----
-function renderProcessos() {
-  let filtered = state.processes.filter(p => {
-    const s = state.search.toLowerCase();
-    if (s && !p.protocol.toLowerCase().includes(s) && !(p.vendedor||'').toLowerCase().includes(s)
-        && !(p.comprador||'').toLowerCase().includes(s) && !(p.matriculas||'').toLowerCase().includes(s)) return false;
-    if (state.filterNatureza && p.natureza !== state.filterNatureza) return false;
+// ── PROCESSOS ─────────────────────────────────────────────
+function renderProc(){
+  let filtered=S.processes.filter(p=>{
+    const s=S.search.toLowerCase();
+    if(s){
+      const base=[p.protocol,p.matriculas||''].join(' ').toLowerCase();
+      const veMatch=partesMatch(p.vendedores,s);
+      const coMatch=partesMatch(p.compradores,s);
+      if(!base.includes(s)&&!veMatch&&!coMatch)return false;
+    }
+    if(S.filterNat&&p.natureza!==S.filterNat)return false;
+    if(S.filterStatus&&(p.status||'cadastrado')!==S.filterStatus)return false;
+    if(S.pipeFilter&&(p.status||'cadastrado')!==S.pipeFilter)return false;
+    if(S.filterDateFrom&&p[S.filterDateField]&&p[S.filterDateField]<S.filterDateFrom)return false;
+    if(S.filterDateTo&&p[S.filterDateField]&&p[S.filterDateField]>S.filterDateTo)return false;
     return true;
   });
-  return `
-  <div class="page-header">
-    <div><div class="page-title">Processos e Protocolos</div><div class="page-subtitle">${filtered.length} resultado(s)</div></div>
-    <button class="btn btn-primary" id="btnNovoProcesso"><i class="ti ti-plus" aria-hidden="true"></i> Novo protocolo</button>
-  </div>
+  return `<div class="page-header"><div><div class="page-title">Processos e Protocolos</div><div class="page-subtitle">${filtered.length} resultado(s)</div></div>
+    <div class="flex gap-sm flex-wrap">
+      ${S.pipeFilter?`<button class="btn btn-warning btn-sm" id="btnCP"><i class="ti ti-x"></i> ${getSt(S.pipeFilter).label}</button>`:''}
+      <button class="btn btn-info btn-sm" id="btnExpPDF"><i class="ti ti-file-type-pdf"></i> Exportar PDF</button>
+      <button class="btn btn-primary" id="btnNovo"><i class="ti ti-plus"></i> Novo protocolo</button>
+    </div></div>
   <div class="filters">
-    <div class="search-box"><i class="ti ti-search" aria-hidden="true"></i><input type="text" placeholder="Buscar por protocolo, nome, matrícula..." id="searchInput" value="${state.search}"></div>
-    <select class="filter-select" id="filterNat">
-      <option value="">Todas as naturezas</option>
-      ${NATUREZAS.map(n=>`<option value="${n.key}"${state.filterNatureza===n.key?' selected':''}>${n.label}</option>`).join('')}
-    </select>
+    <div class="search-box"><i class="ti ti-search"></i><input type="text" placeholder="Buscar protocolo, nome, CPF, matrícula..." id="sI" value="${S.search}"></div>
+    <select class="filter-select" id="fN"><option value="">Todas as naturezas</option>${NATUREZAS.map(n=>`<option value="${n.key}"${S.filterNat===n.key?' selected':''}>${n.label}</option>`).join('')}</select>
+    <select class="filter-select" id="fS"><option value="">Todos os status</option>${STATUSES.map(s=>`<option value="${s.key}"${S.filterStatus===s.key?' selected':''}>${s.label}</option>`).join('')}</select>
+    <select class="filter-select" id="fDF"><option value="dataAbertura"${S.filterDateField==='dataAbertura'?' selected':''}>Por abertura</option><option value="dataAssinatura"${S.filterDateField==='dataAssinatura'?' selected':''}>Por assinatura</option></select>
+    <input type="date" class="filter-date" id="fDD" value="${S.filterDateFrom}">
+    <input type="date" class="filter-date" id="fDT" value="${S.filterDateTo}">
+    <button class="btn btn-secondary btn-sm" id="btnCF" title="Limpar filtros"><i class="ti ti-x"></i></button>
   </div>
-  <div class="card" style="padding:0;overflow:hidden">
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>Protocolo</th><th>Natureza</th><th>Vendedor / Transmitente</th><th>Comprador / Adquirente</th>
-          <th>Matrícula(s)</th><th>Abertura</th><th>Assinatura</th><th>Responsável</th><th>Docs</th><th class="no-print">Ações</th>
-        </tr></thead>
-        <tbody>${filtered.length===0
-          ? `<tr><td colspan="10" class="empty-state"><i class="ti ti-inbox"></i>Nenhum processo encontrado.</td></tr>`
-          : filtered.map(p => {
-              const n=getNaturezaInfo(p.natureza); const {pct,done,total}=getChecklistProgress(p);
-              return `<tr>
-                <td><span class="proto-num">${p.protocol}</span></td>
-                <td><span class="badge ${n.badge}">${n.label.replace(' — ','\n')}</span></td>
-                <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.vendedor||''}">${p.vendedor||'—'}</td>
-                <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.comprador||''}">${p.comprador||'—'}</td>
-                <td style="font-family:var(--mono);font-size:11px">${p.matriculas||'—'}</td>
-                <td class="text-sm text-muted">${p.dataAbertura?new Date(p.dataAbertura+'T12:00:00').toLocaleDateString('pt-BR'):'—'}</td>
-                <td class="text-sm text-muted">${p.dataAssinatura?new Date(p.dataAssinatura+'T12:00:00').toLocaleDateString('pt-BR'):'—'}</td>
-                <td class="text-sm" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.responsavel||'—'}</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:6px">
-                    <div style="width:48px;height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${pct===100?'var(--green)':'var(--accent)'}"></div></div>
-                    <span class="text-xs text-muted">${done}/${total}</span>
-                  </div>
-                </td>
-                <td class="no-print">
-                  <div class="flex gap-sm">
-                    <button class="btn btn-secondary btn-sm" data-open="${p.id}" title="Abrir"><i class="ti ti-folder-open" aria-hidden="true"></i></button>
-                    <button class="btn btn-secondary btn-sm" data-print="${p.id}" title="Imprimir capa"><i class="ti ti-printer" aria-hidden="true"></i></button>
-                    ${state.currentUser.role==='supervisor'?`<button class="btn btn-danger btn-sm" data-delete="${p.id}" title="Excluir"><i class="ti ti-trash" aria-hidden="true"></i></button>`:''}
-                  </div>
-                </td>
-              </tr>`;
-            }).join('')
-        }</tbody>
-      </table>
+  <div class="card" style="padding:0;overflow:hidden"><div class="table-wrap"><table>
+    <thead><tr><th>Protocolo</th><th>Natureza</th><th>Vendedor(es) / Transmitente(s)</th><th>Comprador(es) / Adquirente(s)</th><th>Matrícula(s)</th><th>Abertura</th><th>Assinatura</th><th>Status</th><th>Docs</th><th class="no-print">Ações</th></tr></thead>
+    <tbody>${filtered.length===0?`<tr><td colspan="10" class="empty-state"><i class="ti ti-inbox"></i>Nenhum processo encontrado.</td></tr>`:
+      filtered.map(p=>{
+        const n=getNat(p.natureza);const s=getSt(p.status||'cadastrado');const{pct,done,total}=getClProg(p);const days=daysIn(p);
+        const todayStr=new Date().toISOString().split('T')[0];
+        const assProx=p.dataAssinatura&&new Date(p.dataAssinatura+'T12:00:00')>=new Date()&&Math.ceil((new Date(p.dataAssinatura+'T12:00:00')-new Date())/86400000)<=3;
+        // Nomes das partes com CPF em tooltip
+        const vNomes=(p.vendedores||[]).map(v=>`<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px" title="${v.nome}${v.cpf?' — CPF: '+v.cpf:''}">${v.nome}</div>`).join('');
+        const cNomes=(p.compradores||[]).map(v=>`<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px" title="${v.nome}${v.cpf?' — CPF: '+v.cpf:''}">${v.nome}</div>`).join('');
+        return `<tr>
+          <td><span class="proto-num">${p.protocol}</span></td>
+          <td><span class="badge ${n.badge}" style="font-size:10px">${n.label.split(' — ')[0]}</span></td>
+          <td style="max-width:200px">${vNomes||'—'}</td>
+          <td style="max-width:200px">${cNomes||'—'}</td>
+          <td style="font-family:var(--mono);font-size:11px">${p.matriculas||'—'}</td>
+          <td class="text-sm text-muted">${fD(p.dataAbertura)}</td>
+          <td class="text-sm">${p.dataAssinatura?`<span style="color:${assProx?'var(--green)':'inherit'};font-weight:${assProx?'600':'400'}">${fD(p.dataAssinatura)}${assProx?' 📅':''}</span>`:'—'}</td>
+          <td><span class="status-badge ${s.cls}">${s.label}</span>${days>3?`<br><span class="stale-badge">⚠ ${days}d</span>`:''}</td>
+          <td><div style="display:flex;align-items:center;gap:5px"><div style="width:40px;height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${pct===100?'var(--green)':'var(--accent)'}"></div></div><span class="text-xs text-muted">${done}/${total}</span></div></td>
+          <td class="no-print"><div class="flex gap-sm">
+            <button class="btn btn-secondary btn-sm" data-open="${p.id}" title="Abrir"><i class="ti ti-folder-open"></i></button>
+            <button class="btn btn-secondary btn-sm" data-print="${p.id}" title="Capa"><i class="ti ti-printer"></i></button>
+            ${S.user.role==='supervisor'?`<button class="btn btn-danger btn-sm" data-del="${p.id}"><i class="ti ti-trash"></i></button>`:''}
+          </div></td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table></div></div>`;
+}
+
+// ── CALENDÁRIO ────────────────────────────────────────────
+function renderCal(){
+  const y=S.calYear,m=S.calMonth;const first=new Date(y,m,1);const last=new Date(y,m+1,0);
+  const startDow=first.getDay();const days=[];
+  for(let i=0;i<startDow;i++)days.push({date:null});
+  for(let d=1;d<=last.getDate();d++)days.push({date:new Date(y,m,d)});
+  while(days.length%7!==0)days.push({date:null});
+  const todayStr=new Date().toISOString().split('T')[0];
+  const events={};
+  S.processes.forEach(p=>{if(p.dataAssinatura){if(!events[p.dataAssinatura])events[p.dataAssinatura]=[];events[p.dataAssinatura].push({type:'assina',label:`${p.protocol} — ${partesNomes(p.vendedores).split(' e ')[0]}`});}});
+  return `<div class="page-header"><div><div class="page-title">Calendário</div></div>
+    <div class="flex gap-sm items-center">
+      <button class="btn btn-secondary btn-sm" id="btnCalP"><i class="ti ti-chevron-left"></i></button>
+      <span style="font-size:14px;font-weight:600;min-width:160px;text-align:center">${first.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</span>
+      <button class="btn btn-secondary btn-sm" id="btnCalN"><i class="ti ti-chevron-right"></i></button>
+    </div></div>
+  <div class="card"><div class="cal-header">${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d=>`<div class="cal-dow">${d}</div>`).join('')}</div>
+    <div class="cal-grid">${days.map(({date})=>{if(!date)return`<div class="cal-day other-month"></div>`;const ds=date.toISOString().split('T')[0];const isToday=ds===todayStr;const evs=events[ds]||[];return`<div class="cal-day${isToday?' today':''}"><span class="cal-day-num">${date.getDate()}</span>${evs.map(e=>`<div class="cal-event ${e.type}" title="${e.label}">${e.label}</div>`).join('')}</div>`;}).join('')}</div>
+  </div>
+  <div class="card"><div class="card-header"><div class="card-title">Assinaturas do mês</div></div>
+    ${S.processes.filter(p=>p.dataAssinatura&&p.dataAssinatura.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)).length===0
+      ?'<div class="empty-state" style="padding:1rem"><i class="ti ti-calendar-off"></i>Nenhuma assinatura neste mês.</div>'
+      :S.processes.filter(p=>p.dataAssinatura&&p.dataAssinatura.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)).sort((a,b)=>a.dataAssinatura>b.dataAssinatura?1:-1)
+        .map(p=>{const s=getSt(p.status||'cadastrado');return`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><div><span class="proto-num">${p.protocol}</span><div class="text-xs text-muted mt-sm">${partesNomes(p.vendedores)}</div></div><div class="flex items-center gap-sm"><span class="text-sm fw-600">${fD(p.dataAssinatura)}</span><span class="status-badge ${s.cls}">${s.label}</span></div></div>`;}).join('')}
+  </div>`;
+}
+
+// ── NOTIFICAÇÕES ──────────────────────────────────────────
+function renderNotif(){
+  const notifs=getNotifications();
+  const dangers=notifs.filter(n=>n.type==='danger'),warnings=notifs.filter(n=>n.type==='warning'),infos=notifs.filter(n=>n.type==='info');
+  return `<div class="page-header"><div><div class="page-title">Alertas</div><div class="page-subtitle">${notifs.length} alerta(s)</div></div></div>
+  ${notifs.length===0?'<div class="card"><div class="empty-state"><i class="ti ti-bell-off"></i>Nenhum alerta. Tudo em dia!</div></div>':''}
+  ${dangers.length>0?`<div class="card"><div class="card-header"><div class="card-title" style="color:var(--red)"><i class="ti ti-alert-octagon"></i> Críticos (${dangers.length})</div></div>${dangers.map(n=>`<div class="notif-item danger" data-open="${n.id}" style="cursor:pointer"><i class="ti ti-alert-octagon" style="color:var(--red);font-size:18px;flex-shrink:0"></i><div><div class="fw-600">${n.proto}</div><div class="text-sm">${n.msg}</div></div></div>`).join('')}</div>`:''}
+  ${warnings.length>0?`<div class="card"><div class="card-header"><div class="card-title" style="color:#854d0e"><i class="ti ti-alert-triangle"></i> Atenção (${warnings.length})</div></div>${warnings.map(n=>`<div class="notif-item warning" data-open="${n.id}" style="cursor:pointer"><i class="ti ti-alert-triangle" style="color:#854d0e;font-size:18px;flex-shrink:0"></i><div><div class="fw-600">${n.proto}</div><div class="text-sm">${n.msg}</div></div></div>`).join('')}</div>`:''}
+  ${infos.length>0?`<div class="card"><div class="card-header"><div class="card-title" style="color:#0369a1"><i class="ti ti-calendar"></i> Próximas assinaturas (${infos.length})</div></div>${infos.map(n=>`<div class="notif-item info" data-open="${n.id}" style="cursor:pointer"><i class="ti ti-calendar" style="color:#0369a1;font-size:18px;flex-shrink:0"></i><div><div class="fw-600">${n.proto}</div><div class="text-sm">${n.msg}</div></div></div>`).join('')}</div>`:''}`;
+}
+
+// ── RELATÓRIOS ────────────────────────────────────────────
+function renderRel(){
+  const total=S.processes.length;const pSt={};STATUSES.forEach(s=>pSt[s.key]=S.processes.filter(p=>(p.status||'cadastrado')===s.key).length);
+  return `<div class="page-header"><div><div class="page-title">Relatórios</div></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card"><div class="card-header"><div class="card-title">Exportar PDF</div></div>
+      <div class="flex" style="flex-direction:column;gap:.75rem">
+        <button class="btn btn-primary" id="btnPDFT"><i class="ti ti-file-type-pdf"></i> Todos os processos</button>
+        <button class="btn btn-secondary" id="btnPDFP"><i class="ti ti-file-type-pdf"></i> Com docs pendentes</button>
+        <button class="btn btn-secondary" id="btnPDFA"><i class="ti ti-file-type-pdf"></i> Aguardando assinatura</button>
+        <button class="btn btn-secondary" id="btnPDFH"><i class="ti ti-file-type-pdf"></i> Abertos hoje</button>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><div class="card-title">Distribuição por etapa</div></div>
+      ${STATUSES.map(s=>`<div class="prod-bar"><div class="prod-name"><span class="status-badge ${s.cls}" style="font-size:10px">${s.label}</span></div><div class="prod-bar-wrap"><div class="prod-bar-fill" style="width:${total&&pSt[s.key]?Math.max(pSt[s.key]/total*100,3):0}%;background:var(--accent)">${pSt[s.key]>0?`<span>${pSt[s.key]}</span>`:''}</div></div><div class="prod-count">${pSt[s.key]}</div></div>`).join('')}
     </div>
   </div>`;
 }
 
-// ---- CHECKLISTS ----
-function renderChecklists() {
-  const keys = Object.keys(state.checklists);
-  return `
-  <div class="page-header">
-    <div><div class="page-title">Checklists de Documentos</div><div class="page-subtitle">Modelos por tipo de ato notarial</div></div>
-    <button class="btn btn-primary" id="btnNovoChecklist"><i class="ti ti-plus" aria-hidden="true"></i> Novo checklist</button>
-  </div>
+// ── CHECKLISTS ────────────────────────────────────────────
+function renderCL(){
+  return `<div class="page-header"><div><div class="page-title">Checklists</div></div><button class="btn btn-primary" id="btnNCL"><i class="ti ti-plus"></i> Novo</button></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-    ${keys.map(k => {
-      const cl=state.checklists[k];
-      const total=cl.sections.reduce((a,s)=>a+s.items.length,0);
-      return `<div class="card">
-        <div class="card-header">
-          <div><div class="card-title">${cl.name}</div><div class="text-xs text-muted">${cl.sections.length} seções · ${total} itens</div></div>
-          <button class="btn btn-secondary btn-sm" data-edit-cl="${k}"><i class="ti ti-edit" aria-hidden="true"></i> Editar</button>
-        </div>
-        ${cl.sections.map(s=>`<div class="text-xs" style="margin-bottom:4px"><span class="fw-600">${s.title}</span> <span class="text-muted">— ${s.items.length} item(ns)</span></div>`).join('')}
-      </div>`;
-    }).join('')}
+    ${Object.keys(S.checklists).map(k=>{const cl=S.checklists[k];const t=cl.sections.reduce((a,s)=>a+s.items.length,0);return `<div class="card"><div class="card-header"><div><div class="card-title">${cl.name}</div><div class="text-xs text-muted">${cl.sections.length} seções · ${t} itens</div></div><button class="btn btn-secondary btn-sm" data-ecl="${k}"><i class="ti ti-edit"></i> Editar</button></div>${cl.sections.map(s=>`<div class="text-xs mb-sm"><strong>${s.title}</strong> <span class="text-muted">— ${s.items.length} item(ns)</span></div>`).join('')}</div>`;}).join('')}
   </div>`;
 }
 
-// ---- USUARIOS ----
-function renderUsuarios() {
-  return `
-  <div class="page-header">
-    <div><div class="page-title">Usuários do Sistema</div><div class="page-subtitle">Gerencie o acesso dos funcionários</div></div>
-    <button class="btn btn-primary" id="btnNovoUsuario"><i class="ti ti-user-plus" aria-hidden="true"></i> Novo usuário</button>
-  </div>
-  <div class="card" style="padding:0;overflow:hidden">
-    <table>
-      <thead><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Cadastrado em</th><th>Ações</th></tr></thead>
-      <tbody>${state.users.map(u=>`<tr>
-        <td><div class="flex items-center gap-sm"><div class="user-badge" style="width:28px;height:28px;font-size:11px">${initials(u.name)}</div>${u.name}</div></td>
-        <td style="font-family:var(--mono);font-size:12px">${u.username}</td>
-        <td><span class="badge ${u.role==='supervisor'?'badge-supervisor':'badge-escrevente'}">${u.role==='supervisor'?'Supervisor':'Escrevente / Auxiliar'}</span></td>
-        <td class="text-sm text-muted">${new Date(u.createdAt).toLocaleDateString('pt-BR')}</td>
-        <td>${u.id!==state.currentUser.id
-          ?`<button class="btn btn-danger btn-sm" data-del-user="${u.id}"><i class="ti ti-trash" aria-hidden="true"></i> Excluir</button>`
-          :'<span class="text-xs text-muted">(você)</span>'}</td>
-      </tr>`).join('')}</tbody>
-    </table>
-  </div>`;
+// ── USUÁRIOS ──────────────────────────────────────────────
+function renderUsers(){
+  return `<div class="page-header"><div><div class="page-title">Usuários</div></div><button class="btn btn-primary" id="btnNU"><i class="ti ti-user-plus"></i> Novo usuário</button></div>
+  <div class="card" style="padding:0;overflow:hidden"><table>
+    <thead><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Cadastrado em</th><th>Ações</th></tr></thead>
+    <tbody>${S.users.map(u=>`<tr><td><div class="flex items-center gap-sm"><div class="user-badge" style="width:28px;height:28px;font-size:11px">${ini(u.name)}</div>${u.name}</div></td><td style="font-family:var(--mono);font-size:12px">${u.username}</td><td><span class="badge ${u.role==='supervisor'?'badge-sup':'badge-esc'}">${u.role==='supervisor'?'Supervisor':'Escrevente / Auxiliar'}</span></td><td class="text-sm text-muted">${fD(u.createdAt)}</td><td>${u.id!==S.user.id?`<button class="btn btn-danger btn-sm" data-du="${u.id}"><i class="ti ti-trash"></i></button>`:'<span class="text-xs text-muted">(você)</span>'}</td></tr>`).join('')}
+    </tbody>
+  </table></div>`;
 }
 
-// ---- PRODUTIVIDADE ----
-function renderProdutividade() {
-  const counts={}, commentCounts={};
-  state.users.forEach(u=>{counts[u.id]=0;commentCounts[u.id]=0;});
-  state.processes.forEach(p=>{counts[p.createdBy]=(counts[p.createdBy]||0)+1;});
-  state.processes.forEach(p=>(p.comments||[]).forEach(c=>{commentCounts[c.authorId]=(commentCounts[c.authorId]||0)+1;}));
-  const sorted=state.users.map(u=>({user:u,count:counts[u.id]||0})).sort((a,b)=>b.count-a.count);
-  const max=sorted.length?Math.max(sorted[0].count,1):1;
-  const totalComments=Object.values(commentCounts).reduce((a,b)=>a+b,0);
-  return `
-  <div class="page-header"><div><div class="page-title">Produtividade</div><div class="page-subtitle">Visão geral por funcionário</div></div></div>
+// ── PRODUTIVIDADE ─────────────────────────────────────────
+function renderProd(){
+  const cnt={},cc={};S.users.forEach(u=>{cnt[u.id]=0;cc[u.id]=0;});
+  S.processes.forEach(p=>{cnt[p.createdBy]=(cnt[p.createdBy]||0)+1;(p.comments||[]).forEach(c=>{cc[c.authorId]=(cc[c.authorId]||0)+1;});});
+  const sorted=S.users.map(u=>({user:u,count:cnt[u.id]||0})).sort((a,b)=>b.count-a.count);
+  const mx=sorted.length?Math.max(sorted[0].count,1):1;
+  return `<div class="page-header"><div><div class="page-title">Produtividade</div></div></div>
   <div style="display:grid;grid-template-columns:2fr 1fr;gap:1rem">
-    <div class="card">
-      <div class="card-header"><div class="card-title"><i class="ti ti-trophy" style="color:var(--accent2)" aria-hidden="true"></i> Protocolos abertos por funcionário</div></div>
-      ${sorted.map((row,i)=>`<div class="prod-bar">
-        <div class="prod-name">${i===0?'🥇 ':i===1?'🥈 ':i===2?'🥉 ':''}<strong>${row.user.name.split(' ').slice(0,2).join(' ')}</strong></div>
-        <div class="prod-bar-wrap"><div class="prod-bar-fill" style="width:${row.count?Math.max(row.count/max*100,3):0}%;background:${i===0?'var(--accent2)':i===1?'var(--accent)':'var(--muted)'}">
-          ${row.count>0?`<span>${row.count}</span>`:''}
-        </div></div>
-        <div class="prod-count" style="color:${i===0?'var(--accent2)':'var(--accent)'}">${row.count}</div>
-      </div>`).join('')}
+    <div class="card"><div class="card-header"><div class="card-title"><i class="ti ti-trophy" style="color:var(--accent2)"></i> Protocolos por funcionário</div></div>
+      ${sorted.map((r,i)=>`<div class="prod-bar"><div class="prod-name">${i===0?'🥇 ':i===1?'🥈 ':i===2?'🥉 ':''}<strong>${r.user.name.split(' ').slice(0,2).join(' ')}</strong></div><div class="prod-bar-wrap"><div class="prod-bar-fill" style="width:${r.count?Math.max(r.count/mx*100,3):0}%;background:${i===0?'var(--accent2)':i===1?'var(--accent)':'var(--muted)'}">${r.count>0?`<span>${r.count}</span>`:''}</div></div><div class="prod-count">${r.count}</div></div>`).join('')}
     </div>
     <div>
-      <div class="card" style="margin-bottom:1rem">
-        <div class="card-title" style="margin-bottom:1rem">Resumo</div>
-        <div class="stat-label">Total de protocolos</div><div class="stat-value">${state.processes.length}</div>
-        <div class="divider-line"></div>
-        <div class="stat-label">Total de comentários</div><div class="stat-value" style="font-size:22px">${totalComments}</div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:.75rem">Comentários por usuário</div>
-        ${state.users.map(u=>`<div class="flex justify-between items-center" style="padding:5px 0;border-bottom:1px solid var(--border);font-size:12px">
-          <span>${u.name.split(' ').slice(0,2).join(' ')}</span>
-          <span style="font-family:var(--mono);font-weight:600;color:var(--accent)">${commentCounts[u.id]||0}</span>
-        </div>`).join('')}
-      </div>
+      <div class="card mb-md"><div class="card-title" style="margin-bottom:1rem">Resumo</div><div class="stat-label">Total de protocolos</div><div class="stat-value">${S.processes.length}</div><div class="divider"></div><div class="stat-label">Comentários totais</div><div class="stat-value" style="font-size:22px">${Object.values(cc).reduce((a,b)=>a+b,0)}</div></div>
+      <div class="card"><div class="card-title" style="margin-bottom:.75rem">Comentários por usuário</div>${S.users.map(u=>`<div class="flex justify-between items-center" style="padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span>${u.name.split(' ').slice(0,2).join(' ')}</span><span style="font-family:var(--mono);font-weight:600;color:var(--accent)">${cc[u.id]||0}</span></div>`).join('')}</div>
     </div>
   </div>`;
 }
 
-// ============================================================
-// MODAL
-// ============================================================
-function renderModal() {
-  let existing = document.getElementById('modalOverlay');
-  if (existing) existing.remove();
-  const el = document.createElement('div');
-  el.id = 'modalOverlay';
-  el.className = 'modal-overlay no-print';
-  el.innerHTML = getModalHTML();
-  document.body.appendChild(el);
-  bindModal();
+// ── PDF ───────────────────────────────────────────────────
+function gerarPDF(title,processes){
+  const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape'});
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  doc.setFontSize(14);doc.setTextColor(26,58,92);doc.text('1º Tabelionato de Notas e Registro de Imóveis de Marabá',14,15);
+  doc.setFontSize(11);doc.text(title+' — '+hoje,14,22);doc.setFontSize(9);doc.setTextColor(100);doc.text(`Total: ${processes.length} processo(s)`,14,28);
+  const rows=processes.map(p=>{const s=getSt(p.status||'cadastrado');const{pct}=getClProg(p);
+    return[p.protocol,getNat(p.natureza).label.split(' — ')[0],partesNomes(p.vendedores),partesNomes(p.compradores),p.matriculas||'—',fD(p.dataAbertura),fD(p.dataAssinatura),s.label,pct+'%'];});
+  doc.autoTable({startY:32,head:[['Protocolo','Natureza','Vendedor(es)','Comprador(es)','Matrícula','Abertura','Assinatura','Status','Docs']],body:rows,styles:{fontSize:8},headStyles:{fillColor:[26,58,92],textColor:255},alternateRowStyles:{fillColor:[245,244,240]}});
+  doc.save(`${title.replace(/\s/g,'_')}_${hoje.replace(/\//g,'-')}.pdf`);showToast('PDF gerado!');
 }
 
-function getModalHTML() {
-  switch(state.modal) {
-    case 'novo_processo':     return modalNovoProcesso();
-    case 'ver_processo':      return modalVerProcesso();
-    case 'imprimir_capa':     return modalImprimirCapa();
-    case 'novo_usuario':      return modalNovoUsuario();
-    case 'editar_checklist':  return modalEditarChecklist();
-    case 'novo_checklist':    return modalNovoChecklist();
-    default: return '';
-  }
-}
-
-function modalNovoProcesso() {
-  return `<div class="modal">
-    <div class="modal-header">
-      <div class="modal-title"><i class="ti ti-file-plus" aria-hidden="true"></i> Novo Protocolo</div>
-      <button class="close-btn" id="closeModal">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="field"><label>Número do Protocolo *</label><input id="fProto" type="text" value="${generateProto()}"></div>
-        <div class="field"><label>Natureza do Ato *</label>
-          <select id="fNatureza"><option value="">Selecione...</option>
-          ${NATUREZAS.map(n=>`<option value="${n.key}">${n.label}</option>`).join('')}</select>
-        </div>
-        <div class="field col-span-2"><label>Vendedor / Transmitente / De Cujus *</label><input id="fVendedor" type="text" placeholder="Nome completo das partes vendedoras/transmitentes"></div>
-        <div class="field col-span-2"><label>Comprador / Adquirente / Herdeiro(s)</label><input id="fComprador" type="text" placeholder="Nome completo"></div>
-        <div class="field col-span-2"><label>Matrícula(s) do Imóvel</label><input id="fMatriculas" type="text" placeholder="Ex: 32.020 e 32.021"></div>
-        <div class="field"><label>Data de Abertura *</label><input id="fDataAbertura" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
-        <div class="field"><label>Data de Assinatura</label><input id="fDataAssinatura" type="date"></div>
-        <div class="field"><label>Responsável / Corretor</label><input id="fResponsavel" type="text" placeholder="Nome e contato"></div>
-        <div class="field"><label>Valor da Venda / Avaliação</label><input id="fValor" type="text" placeholder="Ex: R$ 240.000,00"></div>
-      </div>
-      <div id="novoProtoErr"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" id="closeModal2">Cancelar</button>
-      <button class="btn btn-primary" id="btnSalvarProcesso"><i class="ti ti-check" aria-hidden="true"></i> Salvar e abrir processo</button>
-    </div>
-  </div>`;
-}
-
-function modalVerProcesso() {
-  const p = state.selectedProcess; if (!p) return '';
-  const n = getNaturezaInfo(p.natureza);
-  const cl = state.checklists[p.natureza];
-  const {pct} = getChecklistProgress(p);
-  return `<div class="modal" style="max-width:900px">
-    <div class="modal-header">
+// ── PARTES FORM HELPERS ───────────────────────────────────
+function renderPartesForm(arr,tipo){
+  return arr.map((p,i)=>`
+    <div class="parte-row" id="${tipo}_row_${i}">
       <div>
-        <div class="modal-title"><span class="proto-num">${p.protocol}</span> &nbsp;<span class="badge ${n.badge}">${n.label}</span></div>
-        <div class="text-xs text-muted" style="margin-top:5px">Aberto em ${new Date(p.createdAt).toLocaleDateString('pt-BR')} às ${new Date(p.createdAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} por ${getUserName(p.createdBy)}</div>
+        <span class="parte-num">${tipo==='v'?'Vendedor':'Comprador'} ${arr.length>1?i+1:''}</span>
+        <div class="field" style="margin-bottom:0"><input type="text" class="parte-nome" data-tipo="${tipo}" data-idx="${i}" placeholder="Nome completo" value="${p.nome||''}"></div>
       </div>
-      <div class="flex gap-sm items-center">
-        <button class="btn btn-secondary btn-sm" id="btnPrintFromModal"><i class="ti ti-printer" aria-hidden="true"></i> Imprimir capa</button>
-        <button class="close-btn" id="closeModal">×</button>
+      <div>
+        <span class="parte-num">CPF</span>
+        <div class="field" style="margin-bottom:0"><input type="text" class="parte-cpf" data-tipo="${tipo}" data-idx="${i}" placeholder="000.000.000-00" value="${p.cpf||''}"></div>
       </div>
-    </div>
-    <div class="modal-body">
-      <div class="tabs">
-        <div class="tab${state.activeTab==='dados'?' active':''}" data-tab="dados"><i class="ti ti-info-circle" aria-hidden="true"></i> Dados do Processo</div>
-        <div class="tab${state.activeTab==='checklist'?' active':''}" data-tab="checklist"><i class="ti ti-checklist" aria-hidden="true"></i> Documentos (${pct}%)</div>
-        <div class="tab${state.activeTab==='comentarios'?' active':''}" data-tab="comentarios"><i class="ti ti-message" aria-hidden="true"></i> Comentários (${(p.comments||[]).length})</div>
-      </div>
-      ${state.activeTab==='dados'    ? tabDados(p) : ''}
-      ${state.activeTab==='checklist'? tabChecklist(p,cl) : ''}
-      ${state.activeTab==='comentarios'? tabComentarios(p) : ''}
-    </div>
-  </div>`;
+      <button class="btn btn-danger btn-sm" style="margin-top:18px;flex-shrink:0" data-rp="${tipo}" data-idx="${i}" ${arr.length===1?'disabled':''} title="Remover"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
 }
 
-function tabDados(p) {
-  return `<div class="form-grid">
-    <div class="field"><label>Número do Protocolo</label><input id="ep_proto" type="text" value="${p.protocol}"></div>
-    <div class="field"><label>Natureza</label><input type="text" value="${getNaturezaInfo(p.natureza).label}" disabled></div>
-    <div class="field col-span-2"><label>Vendedor / Transmitente</label><input id="ep_vendedor" type="text" value="${p.vendedor||''}"></div>
-    <div class="field col-span-2"><label>Comprador / Adquirente</label><input id="ep_comprador" type="text" value="${p.comprador||''}"></div>
-    <div class="field col-span-2"><label>Matrícula(s)</label><input id="ep_matriculas" type="text" value="${p.matriculas||''}"></div>
-    <div class="field"><label>Data de Abertura</label><input id="ep_dataAbertura" type="date" value="${p.dataAbertura||''}"></div>
-    <div class="field"><label>Data de Assinatura</label><input id="ep_dataAssinatura" type="date" value="${p.dataAssinatura||''}"></div>
-    <div class="field"><label>Responsável</label><input id="ep_responsavel" type="text" value="${p.responsavel||''}"></div>
-    <div class="field"><label>Valor</label><input id="ep_valor" type="text" value="${p.valor||''}"></div>
+function readPartesFromForm(tipo){
+  const arr=[];
+  document.querySelectorAll(`.parte-nome[data-tipo="${tipo}"]`).forEach((el,i)=>{
+    arr.push({nome:el.value.trim(),cpf:(document.querySelector(`.parte-cpf[data-tipo="${tipo}"][data-idx="${i}"]`)||{value:''}).value.trim()});
+  });
+  return arr;
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function renderModal(){let ov=document.getElementById('mOv');if(ov)ov.remove();const el=document.createElement('div');el.id='mOv';el.className='modal-overlay no-print';el.innerHTML=getMH();document.body.appendChild(el);bindModal();}
+function getMH(){switch(S.modal){case'novo':return mNovo();case'ver':return mVer();case'capa':return mCapa();case'novoUser':return mNovoUser();case'editCl':return mEditCl();case'novoCl':return mNovoCl();default:return'';}}
+
+function mNovo(){
+  return `<div class="modal"><div class="modal-header"><div class="modal-title"><i class="ti ti-file-plus"></i> Novo Protocolo</div><button class="close-btn" id="cm">×</button></div>
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="field"><label>Protocolo *</label><input id="fPr" type="text" value="${genProto()}"></div>
+      <div class="field"><label>Natureza *</label><select id="fNa"><option value="">Selecione...</option>${NATUREZAS.map(n=>`<option value="${n.key}">${n.label}</option>`).join('')}</select></div>
+    </div>
+    <div class="section-label"><i class="ti ti-user"></i> Vendedores / Transmitentes / De Cujus</div>
+    <div id="vendedoresForm">${renderPartesForm(tmpVendedores,'v')}</div>
+    <button class="btn btn-secondary btn-sm" id="btnAV" style="margin-bottom:1rem"><i class="ti ti-plus"></i> + Vendedor</button>
+    <div class="section-label"><i class="ti ti-users"></i> Compradores / Adquirentes / Herdeiros</div>
+    <div id="compradoresForm">${renderPartesForm(tmpCompradores,'c')}</div>
+    <button class="btn btn-secondary btn-sm" id="btnAC2" style="margin-bottom:1rem"><i class="ti ti-plus"></i> + Comprador</button>
+    <div class="section-label"><i class="ti ti-home"></i> Dados do Processo</div>
+    <div class="form-grid">
+      <div class="field col-span-2"><label>Matrícula(s) do Imóvel</label><input id="fMa" type="text" placeholder="Ex: 32.020 e 32.021"></div>
+      <div class="field"><label>Data de Abertura *</label><input id="fDa" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="field"><label>Data de Assinatura</label><input id="fDs" type="date"></div>
+      <div class="field"><label>Responsável / Corretor</label><input id="fRe" type="text"></div>
+      <div class="field"><label>Valor da Venda / Avaliação</label><input id="fVl" type="text" placeholder="R$ 0,00"></div>
+    </div>
+    <div id="nErr"></div>
   </div>
-  <div style="margin-top:1rem;text-align:right">
-    <button class="btn btn-primary" id="btnSalvarEdicao"><i class="ti ti-device-floppy" aria-hidden="true"></i> Salvar alterações</button>
-  </div>`;
+  <div class="modal-footer"><button class="btn btn-secondary" id="cm2">Cancelar</button><button class="btn btn-primary" id="btnSvP"><i class="ti ti-check"></i> Salvar</button></div></div>`;
 }
 
-function tabChecklist(p, cl) {
-  if (!cl) return '<div class="empty-state"><i class="ti ti-file-unknown"></i>Checklist não configurado para esta natureza.</div>';
-  const {done,total,pct} = getChecklistProgress(p);
-  return `<div>
-    <div class="checklist-progress">
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-      <div class="progress-text">${done} de ${total} documentos — ${pct}% ${pct===100?'✓ Completo!':''}</div>
+function mVer(){
+  const p=S.selectedProcess;if(!p)return '';
+  const n=getNat(p.natureza);const s=getSt(p.status||'cadastrado');const{pct}=getClProg(p);const cl=S.checklists[p.natureza];
+  const days=daysIn(p);const ca=canAdv(p);const nxt=nextSt(p);
+  return `<div class="modal" style="max-width:920px"><div class="modal-header">
+    <div><div class="modal-title"><span class="proto-num">${p.protocol}</span> <span class="badge ${n.badge}">${n.label}</span> <span class="status-badge ${s.cls}"><i class="ti ${s.icon}"></i>${s.label}</span>${days>3?`<span class="stale-badge">⚠ ${days}d</span>`:''}</div>
+    <div class="text-xs text-muted" style="margin-top:5px">Aberto em ${fD(p.dataAbertura)} por ${getUN(p.createdBy)}</div></div>
+    <div class="flex gap-sm items-center">
+      ${ca?`<button class="btn btn-success btn-sm" id="btnAdv"><i class="ti ti-arrow-right"></i> → ${nxt.label}</button>`:''}
+      <button class="btn btn-secondary btn-sm" id="btnPrt"><i class="ti ti-printer"></i> Capa</button>
+      <button class="close-btn" id="cm">×</button>
+    </div></div>
+  <div class="modal-body">
+    <div class="tabs">
+      <div class="tab${S.activeTab==='dados'?' active':''}" data-tab="dados"><i class="ti ti-info-circle"></i> Dados</div>
+      <div class="tab${S.activeTab==='checklist'?' active':''}" data-tab="checklist"><i class="ti ti-checklist"></i> Documentos (${pct}%)</div>
+      <div class="tab${S.activeTab==='historico'?' active':''}" data-tab="historico"><i class="ti ti-history"></i> Histórico</div>
+      <div class="tab${S.activeTab==='comentarios'?' active':''}" data-tab="comentarios"><i class="ti ti-message"></i> Comentários (${(p.comments||[]).length})</div>
     </div>
-    ${cl.sections.map((s,si)=>{
-      const sectionDone = s.items.filter((_,ii)=>p.checklist&&p.checklist[si]&&p.checklist[si][ii]).length;
-      return `<div class="checklist-section">
-        <div class="checklist-section-title">${s.title}<span class="text-xs">${sectionDone}/${s.items.length}</span></div>
-        ${s.items.map((item,ii)=>{
-          const checked=p.checklist&&p.checklist[si]&&p.checklist[si][ii];
-          return `<div class="check-item${checked?' checked':''}">
-            <input type="checkbox" ${checked?'checked':''} id="chk_${si}_${ii}" data-si="${si}" data-ii="${ii}">
-            <label for="chk_${si}_${ii}">${item}</label>
-          </div>`;
-        }).join('')}
-      </div>`;
-    }).join('')}
-  </div>`;
-}
-
-function tabComentarios(p) {
-  const comments = p.comments || [];
-  return `<div>
-    ${comments.length===0?'<div class="empty-state" style="padding:1.5rem"><i class="ti ti-message-off"></i>Nenhum comentário ainda.</div>':''}
-    ${comments.map((c,ci)=>`
-      <div class="comment">
-        <div class="comment-header">
-          <div class="comment-author">
-            <div class="user-badge" style="width:24px;height:24px;font-size:10px">${initials(getUserName(c.authorId))}</div>
-            ${getUserName(c.authorId)}
-          </div>
-          <div class="flex items-center gap-sm">
-            <span class="comment-date">${new Date(c.createdAt).toLocaleString('pt-BR')}</span>
-            ${c.authorId===state.currentUser.id?`<button class="btn btn-danger btn-sm" style="padding:3px 8px" data-del-comment="${ci}" title="Excluir meu comentário"><i class="ti ti-trash" aria-hidden="true"></i></button>`:''}
-          </div>
-        </div>
-        <div class="comment-text">${c.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-      </div>
-    `).join('')}
-    <div class="comment-input-area">
-      <textarea id="newComment" placeholder="Escreva um comentário... (Ctrl+Enter para enviar)"></textarea>
-      <button class="btn btn-primary" id="btnAddComment" title="Enviar comentário"><i class="ti ti-send" aria-hidden="true"></i></button>
-    </div>
-  </div>`;
-}
-
-function modalImprimirCapa() {
-  const p = state.selectedProcess || {};
-  const n = getNaturezaInfo(p.natureza||'');
-  const cl = state.checklists[p.natureza||''];
-  const presented=[], pending=[];
-  if (cl && p.checklist) {
-    cl.sections.forEach((s,si)=>s.items.forEach((item,ii)=>{
-      if (p.checklist[si]&&p.checklist[si][ii]) presented.push(item);
-      else pending.push(item);
-    }));
-  }
-  return `<div class="modal" style="max-width:760px">
-    <div class="modal-header no-print">
-      <div class="modal-title"><i class="ti ti-printer" aria-hidden="true"></i> Capa do Protocolo — Prévia de Impressão</div>
-      <div class="flex gap-sm"><button class="btn btn-primary btn-sm" onclick="window.print()"><i class="ti ti-printer" aria-hidden="true"></i> Imprimir</button><button class="close-btn" id="closeModal">×</button></div>
-    </div>
-    <div class="modal-body">
-      <div id="editableFields" class="no-print" style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap;padding:.75rem;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border)">
-        <div style="font-size:12px;font-weight:600;color:var(--muted);width:100%;margin-bottom:4px">Editar antes de imprimir:</div>
-        <div class="field" style="flex:1;min-width:180px;margin:0"><label>Vendedor / Transmitente</label><input id="cv_v" type="text" value="${p.vendedor||''}"></div>
-        <div class="field" style="flex:1;min-width:180px;margin:0"><label>Comprador / Adquirente</label><input id="cv_c" type="text" value="${p.comprador||''}"></div>
-        <div class="field" style="flex:0 0 160px;margin:0"><label>Data de Assinatura</label><input id="cv_d" type="date" value="${p.dataAssinatura||''}"></div>
-        <button class="btn btn-secondary btn-sm" style="align-self:flex-end;height:36px" id="btnRefreshCover"><i class="ti ti-refresh" aria-hidden="true"></i> Atualizar prévia</button>
-      </div>
-      <div class="cover-preview" id="coverPreview">
-        <div class="cover-header">
-          <div style="font-size:26px;margin-bottom:.5rem">⚖</div>
-          <h2>1º Tabelionato de Notas e Registro de Imóveis de Marabá</h2>
-          <p>Av. VP8, Folha 32, Quadra 07, Lote 82/83, Nova Marabá, Marabá-PA</p>
-          <p>Tel: (94) 3321-0393 | Whatsapp: (94) 9.9277-9000 | atendimento@rimaraba.com.br</p>
-          <p><strong>Marcos Alberto Pereira dos Santos — Oficial do Registro de Imóveis e Tabelião</strong></p>
-        </div>
-        <div class="cover-proto">PROTOCOLO Nº ${p.protocol||'—'}</div>
-        <div class="cover-section">
-          <h3>Dados da Escritura</h3>
-          <div class="cover-row"><span class="cover-label">Natureza:</span><span class="cover-val">${n.label}</span></div>
-          <div class="cover-row"><span class="cover-label">Vendedor(es):</span><span class="cover-val" id="cvp_v">${p.vendedor||'—'}</span></div>
-          <div class="cover-row"><span class="cover-label">Comprador(es):</span><span class="cover-val" id="cvp_c">${p.comprador||'—'}</span></div>
-          <div class="cover-row"><span class="cover-label">Matrícula(s):</span><span class="cover-val">${p.matriculas||'—'}</span></div>
-          <div class="cover-row"><span class="cover-label">Valor:</span><span class="cover-val">${p.valor||'—'}</span></div>
-          <div class="cover-row"><span class="cover-label">Data de Assinatura:</span><span class="cover-val" id="cvp_d">${p.dataAssinatura?new Date(p.dataAssinatura+'T12:00:00').toLocaleDateString('pt-BR'):'—'}</span></div>
-          <div class="cover-row"><span class="cover-label">Contato Responsável:</span><span class="cover-val">${p.responsavel||'—'}</span></div>
-          <div class="cover-row"><span class="cover-label">Data de Abertura:</span><span class="cover-val">${p.dataAbertura?new Date(p.dataAbertura+'T12:00:00').toLocaleDateString('pt-BR'):'—'}</span></div>
-          <div class="cover-row"><span class="cover-label">Cadastrado por:</span><span class="cover-val">${getUserName(p.createdBy)}</span></div>
-        </div>
-        <div class="cover-docs">
-          <div class="cover-section">
-            <h3>Documentos Apresentados</h3>
-            ${presented.length===0?'<div style="font-size:10px;color:#888">Nenhum documento marcado.</div>':
-              presented.map(d=>`<div style="font-size:10px;padding:1px 0;color:#2d6a4f">✓ ${d}</div>`).join('')}
-          </div>
-          <div class="cover-section">
-            <h3>Documentos Pendentes</h3>
-            ${pending.length===0?'<div style="font-size:10px;color:#2d6a4f;font-weight:700">Documentação completa! ✓</div>':
-              pending.map(d=>`<div style="font-size:10px;padding:1px 0;color:#8b1a1a">○ ${d}</div>`).join('')}
-          </div>
-        </div>
-        <div class="cover-footer">
-          <div class="cover-sig">Interessado(a)<br><br>Marabá-PA, ${new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'})}</div>
-          <div class="cover-sig">Escrevente / Auxiliar responsável</div>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
-function modalNovoUsuario() {
-  return `<div class="modal" style="max-width:480px">
-    <div class="modal-header"><div class="modal-title"><i class="ti ti-user-plus" aria-hidden="true"></i> Novo Usuário</div><button class="close-btn" id="closeModal">×</button></div>
-    <div class="modal-body">
-      <div class="field"><label>Nome completo</label><input id="nu_nome" type="text" placeholder="Nome do funcionário"></div>
-      <div class="field"><label>Usuário (login)</label><input id="nu_user" type="text" placeholder="nome.sobrenome (sem espaços)"></div>
-      <div class="field"><label>Senha inicial</label><input id="nu_pass" type="password" placeholder="Mínimo 6 caracteres"></div>
-      <div class="field"><label>Perfil de acesso</label>
-        <select id="nu_role"><option value="escrevente">Escrevente / Auxiliar</option><option value="supervisor">Supervisor</option></select>
-      </div>
-      <div id="nu_err"></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-secondary" id="closeModal2">Cancelar</button><button class="btn btn-primary" id="btnSalvarUsuario"><i class="ti ti-check" aria-hidden="true"></i> Criar usuário</button></div>
-  </div>`;
-}
-
-function modalEditarChecklist() {
-  const key = state.editingChecklist;
-  const cl = state.checklists[key];
-  if (!cl) return '';
-  return `<div class="modal" style="max-width:700px">
-    <div class="modal-header"><div class="modal-title"><i class="ti ti-edit" aria-hidden="true"></i> Editar Checklist</div><button class="close-btn" id="closeModal">×</button></div>
-    <div class="modal-body">
-      <div class="field"><label>Nome do checklist</label><input id="cl_name" type="text" value="${cl.name}"></div>
-      <div id="cl_sections">
-        ${cl.sections.map((s,si)=>`
-          <div class="checklist-section">
-            <div class="flex items-center gap-sm" style="margin-bottom:.5rem">
-              <input type="text" class="cl_sec_title" data-si="${si}" value="${s.title}" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;font-weight:600;font-family:var(--font)">
-              <button class="btn btn-danger btn-sm" data-del-sec="${si}" title="Remover seção"><i class="ti ti-trash" aria-hidden="true"></i></button>
-            </div>
-            <div id="cl_items_${si}">
-              ${s.items.map((item,ii)=>`
-                <div class="cl-item-row">
-                  <input type="text" class="cl_item_text" data-si="${si}" data-ii="${ii}" value="${item.replace(/"/g,'&quot;')}">
-                  <button class="btn btn-danger btn-sm" style="padding:4px 8px;flex-shrink:0" data-del-item="${si}-${ii}"><i class="ti ti-x" aria-hidden="true"></i></button>
-                </div>
-              `).join('')}
-            </div>
-            <button class="btn btn-secondary btn-sm" style="margin-top:.5rem" data-add-item="${si}"><i class="ti ti-plus" aria-hidden="true"></i> Adicionar item</button>
-          </div>
-        `).join('')}
-      </div>
-      <button class="btn btn-secondary btn-sm" id="btnAddSection" style="margin-top:.5rem"><i class="ti ti-plus" aria-hidden="true"></i> Nova seção</button>
-    </div>
-    <div class="modal-footer"><button class="btn btn-secondary" id="closeModal2">Cancelar</button><button class="btn btn-primary" id="btnSalvarChecklist"><i class="ti ti-device-floppy" aria-hidden="true"></i> Salvar checklist</button></div>
-  </div>`;
-}
-
-function modalNovoChecklist() {
-  return `<div class="modal" style="max-width:480px">
-    <div class="modal-header"><div class="modal-title"><i class="ti ti-plus" aria-hidden="true"></i> Novo Checklist</div><button class="close-btn" id="closeModal">×</button></div>
-    <div class="modal-body">
-      <div class="field"><label>Identificador único (sem espaços)</label><input id="ncl_key" type="text" placeholder="ex: procuracao_pf"></div>
-      <div class="field"><label>Nome do checklist</label><input id="ncl_name" type="text" placeholder="ex: Escritura de Procuração"></div>
-      <div id="ncl_err"></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-secondary" id="closeModal2">Cancelar</button><button class="btn btn-primary" id="btnCriarChecklist"><i class="ti ti-check" aria-hidden="true"></i> Criar</button></div>
-  </div>`;
-}
-
-// ============================================================
-// BIND
-// ============================================================
-function bindApp() {
-  document.getElementById('btnLogout').onclick = () => { state.currentUser=null; render(); };
-  document.querySelectorAll('.nav-item[data-page]').forEach(el=>el.onclick=()=>{state.page=el.dataset.page;render();});
-
-  const btnNP = document.getElementById('btnNovoProcesso');
-  if (btnNP) btnNP.onclick = ()=>{state.modal='novo_processo';renderModal();};
-  const btnNU = document.getElementById('btnNovoUsuario');
-  if (btnNU) btnNU.onclick = ()=>{state.modal='novo_usuario';renderModal();};
-  const btnNCL = document.getElementById('btnNovoChecklist');
-  if (btnNCL) btnNCL.onclick = ()=>{state.modal='novo_checklist';renderModal();};
-
-  const si = document.getElementById('searchInput');
-  if (si) si.oninput = e=>{state.search=e.target.value;render();};
-  const fn = document.getElementById('filterNat');
-  if (fn) fn.onchange = e=>{state.filterNatureza=e.target.value;render();};
-
-  document.querySelectorAll('[data-open]').forEach(btn=>{
-    btn.onclick=()=>{state.selectedProcess=state.processes.find(p=>p.id===btn.dataset.open);state.activeTab='dados';state.modal='ver_processo';renderModal();};
-  });
-  document.querySelectorAll('[data-print]').forEach(btn=>{
-    btn.onclick=()=>{state.selectedProcess=state.processes.find(p=>p.id===btn.dataset.print);state.modal='imprimir_capa';renderModal();};
-  });
-  document.querySelectorAll('[data-delete]').forEach(btn=>{
-    btn.onclick=async()=>{
-      if(!confirm('Tem certeza que deseja EXCLUIR este protocolo? Esta ação não pode ser desfeita.'))return;
-      setSyncing(true);
-      await db.collection('processes').doc(btn.dataset.delete).delete();
-      setSyncing(false);
-      showToast('Protocolo excluído.');
-    };
-  });
-  document.querySelectorAll('[data-del-user]').forEach(btn=>{
-    btn.onclick=async()=>{
-      if(!confirm('Excluir este usuário?'))return;
-      await db.collection('users').doc(btn.dataset.delUser).delete();
-      state.users=state.users.filter(u=>u.id!==btn.dataset.delUser);
-      render();showToast('Usuário excluído.');
-    };
-  });
-  document.querySelectorAll('[data-edit-cl]').forEach(btn=>{
-    btn.onclick=()=>{state.editingChecklist=btn.dataset.editCl;state.modal='editar_checklist';renderModal();};
-  });
-}
-
-function bindModal() {
-  const ov = document.getElementById('modalOverlay'); if(!ov) return;
-  ov.querySelectorAll('#closeModal,#closeModal2').forEach(btn=>btn.onclick=()=>{state.modal=null;ov.remove();});
-
-  // NOVO PROCESSO
-  const btnSP = document.getElementById('btnSalvarProcesso');
-  if (btnSP) btnSP.onclick = async()=>{
-    const proto=document.getElementById('fProto').value.trim();
-    const nat=document.getElementById('fNatureza').value;
-    const vend=document.getElementById('fVendedor').value.trim();
-    const da=document.getElementById('fDataAbertura').value;
-    if(!proto||!nat||!vend||!da){document.getElementById('novoProtoErr').innerHTML='<div class="error-msg">Preencha os campos obrigatórios: Protocolo, Natureza, Vendedor/Transmitente e Data de Abertura.</div>';return;}
-    if(state.processes.find(p=>p.protocol===proto)){document.getElementById('novoProtoErr').innerHTML='<div class="error-msg">Já existe um processo com este número de protocolo.</div>';return;}
-    btnSP.disabled=true; btnSP.innerHTML='<div class="spinner"></div> Salvando...';
-    const np={
-      id:'p'+Date.now()+Math.random().toString(36).slice(2,7),
-      protocol:proto, natureza:nat, vendedor:vend,
-      comprador:document.getElementById('fComprador').value.trim(),
-      matriculas:document.getElementById('fMatriculas').value.trim(),
-      dataAbertura:da,
-      dataAssinatura:document.getElementById('fDataAssinatura').value,
-      responsavel:document.getElementById('fResponsavel').value.trim(),
-      valor:document.getElementById('fValor').value.trim(),
-      createdBy:state.currentUser.id,
-      createdAt:new Date().toISOString(),
-      checklist:initChecklist(nat),
-      comments:[]
-    };
-    setSyncing(true);
-    await db.collection('processes').doc(np.id).set(np);
-    setSyncing(false);
-    state.selectedProcess=np; state.activeTab='dados'; state.modal='ver_processo';
-    ov.remove(); render(); renderModal();
-    showToast('Protocolo '+proto+' criado com sucesso!');
-  };
-
-  // TABS
-  ov.querySelectorAll('.tab[data-tab]').forEach(tab=>tab.onclick=()=>{state.activeTab=tab.dataset.tab;ov.innerHTML=getModalHTML();bindModal();});
-
-  // SALVAR EDIÇÃO
-  const btnSE = document.getElementById('btnSalvarEdicao');
-  if (btnSE) btnSE.onclick = async()=>{
-    const p=state.selectedProcess;
-    const updated={...p,
-      protocol:document.getElementById('ep_proto').value.trim(),
-      vendedor:document.getElementById('ep_vendedor').value.trim(),
-      comprador:document.getElementById('ep_comprador').value.trim(),
-      matriculas:document.getElementById('ep_matriculas').value.trim(),
-      dataAbertura:document.getElementById('ep_dataAbertura').value,
-      dataAssinatura:document.getElementById('ep_dataAssinatura').value,
-      responsavel:document.getElementById('ep_responsavel').value.trim(),
-      valor:document.getElementById('ep_valor').value.trim()
-    };
-    btnSE.disabled=true; setSyncing(true);
-    await db.collection('processes').doc(p.id).update(updated);
-    setSyncing(false);
-    state.selectedProcess=updated;
-    const idx=state.processes.findIndex(x=>x.id===p.id);
-    if(idx>=0) state.processes[idx]=updated;
-    ov.innerHTML=getModalHTML(); bindModal();
-    showToast('Alterações salvas!');
-  };
-
-  // CHECKLIST
-  ov.querySelectorAll('input[type=checkbox][data-si]').forEach(el=>{
-    el.onchange=async(e)=>{
-      const si=parseInt(e.target.dataset.si), ii=parseInt(e.target.dataset.ii);
-      const p=state.selectedProcess;
-      if(!p.checklist[si]) p.checklist[si]={};
-      p.checklist[si][ii]=e.target.checked;
-      setSyncing(true);
-      await db.collection('processes').doc(p.id).update({checklist:p.checklist});
-      setSyncing(false);
-      const idx=state.processes.findIndex(x=>x.id===p.id);
-      if(idx>=0) state.processes[idx]={...p};
-      ov.innerHTML=getModalHTML(); bindModal();
-    };
-  });
-
-  // COMENTÁRIOS
-  const btnAC = document.getElementById('btnAddComment');
-  if (btnAC) {
-    const sendComment = async()=>{
-      const text=document.getElementById('newComment').value.trim(); if(!text) return;
-      const p=state.selectedProcess;
-      const comments=[...(p.comments||[]),{id:'c'+Date.now(),authorId:state.currentUser.id,text,createdAt:new Date().toISOString()}];
-      setSyncing(true);
-      await db.collection('processes').doc(p.id).update({comments});
-      setSyncing(false);
-      p.comments=comments;
-      const idx=state.processes.findIndex(x=>x.id===p.id);
-      if(idx>=0) state.processes[idx]={...p};
-      ov.innerHTML=getModalHTML(); bindModal();
-    };
-    btnAC.onclick=sendComment;
-    const nc=document.getElementById('newComment');
-    if(nc) nc.onkeydown=e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))sendComment();};
-  }
-  ov.querySelectorAll('[data-del-comment]').forEach(btn=>{
-    btn.onclick=async()=>{
-      const ci=parseInt(btn.dataset.delComment);
-      const p=state.selectedProcess;
-      const comments=[...(p.comments||[])]; comments.splice(ci,1);
-      setSyncing(true);
-      await db.collection('processes').doc(p.id).update({comments});
-      setSyncing(false);
-      p.comments=comments;
-      const idx=state.processes.findIndex(x=>x.id===p.id);
-      if(idx>=0) state.processes[idx]={...p};
-      ov.innerHTML=getModalHTML(); bindModal();
-    };
-  });
-
-  // PRINT COVER
-  const btnPFM=document.getElementById('btnPrintFromModal');
-  if(btnPFM) btnPFM.onclick=()=>{state.modal='imprimir_capa';ov.innerHTML=getModalHTML();bindModal();};
-  const btnRC=document.getElementById('btnRefreshCover');
-  if(btnRC) btnRC.onclick=()=>{
-    const vv=document.getElementById('cv_v').value;
-    const cv=document.getElementById('cv_c').value;
-    const dd=document.getElementById('cv_d').value;
-    const pv=document.getElementById('cvp_v'),pc=document.getElementById('cvp_c'),pd=document.getElementById('cvp_d');
-    if(pv)pv.textContent=vv||'—';
-    if(pc)pc.textContent=cv||'—';
-    if(pd)pd.textContent=dd?new Date(dd+'T12:00:00').toLocaleDateString('pt-BR'):'—';
-  };
-
-  // NOVO USUARIO
-  const btnSU=document.getElementById('btnSalvarUsuario');
-  if(btnSU) btnSU.onclick=async()=>{
-    const nome=document.getElementById('nu_nome').value.trim();
-    const user=document.getElementById('nu_user').value.trim();
-    const pass=document.getElementById('nu_pass').value;
-    const role=document.getElementById('nu_role').value;
-    if(!nome||!user||!pass){document.getElementById('nu_err').innerHTML='<div class="error-msg">Preencha todos os campos.</div>';return;}
-    if(pass.length<6){document.getElementById('nu_err').innerHTML='<div class="error-msg">A senha deve ter pelo menos 6 caracteres.</div>';return;}
-    if(state.users.find(u=>u.username===user)){document.getElementById('nu_err').innerHTML='<div class="error-msg">Este nome de usuário já existe.</div>';return;}
-    const nu={id:'u'+Date.now(),name:nome,username:user,password:pass,role,createdAt:new Date().toISOString()};
-    await db.collection('users').doc(nu.id).set(nu);
-    state.users.push(nu);
-    state.modal=null; ov.remove(); render();
-    showToast('Usuário '+nome+' criado com sucesso!');
-  };
-
-  // EDITAR CHECKLIST
-  const btnSCL=document.getElementById('btnSalvarChecklist');
-  if(btnSCL) btnSCL.onclick=async()=>{
-    const key=state.editingChecklist;
-    const cl=JSON.parse(JSON.stringify(state.checklists[key]));
-    cl.name=document.getElementById('cl_name').value.trim();
-    cl.sections.forEach((s,si)=>{
-      const te=ov.querySelector(`.cl_sec_title[data-si="${si}"]`);
-      if(te) s.title=te.value;
-      const items=[];
-      ov.querySelectorAll(`.cl_item_text[data-si="${si}"]`).forEach(el=>items.push(el.value));
-      s.items=items;
-    });
-    state.checklists[key]=cl;
-    btnSCL.disabled=true; setSyncing(true);
-    await db.collection('config').doc('checklists').set({data:state.checklists});
-    setSyncing(false);
-    state.modal=null; ov.remove(); render();
-    showToast('Checklist salvo!');
-  };
-  ov.querySelectorAll('[data-add-item]').forEach(btn=>btn.onclick=()=>{
-    const si=parseInt(btn.dataset.addItem);
-    state.checklists[state.editingChecklist].sections[si].items.push('Novo item');
-    ov.innerHTML=getModalHTML(); bindModal();
-  });
-  ov.querySelectorAll('[data-del-item]').forEach(btn=>btn.onclick=()=>{
-    const[si,ii]=btn.dataset.delItem.split('-').map(Number);
-    state.checklists[state.editingChecklist].sections[si].items.splice(ii,1);
-    ov.innerHTML=getModalHTML(); bindModal();
-  });
-  ov.querySelectorAll('[data-del-sec]').forEach(btn=>btn.onclick=()=>{
-    const si=parseInt(btn.dataset.delSec);
-    if(!confirm('Remover esta seção?'))return;
-    state.checklists[state.editingChecklist].sections.splice(si,1);
-    ov.innerHTML=getModalHTML(); bindModal();
-  });
-  const btnAS=document.getElementById('btnAddSection');
-  if(btnAS) btnAS.onclick=()=>{state.checklists[state.editingChecklist].sections.push({title:'Nova Seção',items:['Novo item']});ov.innerHTML=getModalHTML();bindModal();};
-
-  // NOVO CHECKLIST
-  const btnCCL=document.getElementById('btnCriarChecklist');
-  if(btnCCL) btnCCL.onclick=async()=>{
-    const key=document.getElementById('ncl_key').value.trim().replace(/[\s\/]/g,'_');
-    const name=document.getElementById('ncl_name').value.trim();
-    if(!key||!name){document.getElementById('ncl_err').innerHTML='<div class="error-msg">Preencha chave e nome.</div>';return;}
-    if(state.checklists[key]){document.getElementById('ncl_err').innerHTML='<div class="error-msg">Esta chave já existe. Escolha outro identificador.</div>';return;}
-    state.checklists[key]={name,sections:[{title:'Documentos necessários',items:['Item 1']}]};
-    state.editingChecklist=key; state.modal='editar_checklist';
-    ov.innerHTML=getModalHTML(); bindModal();
-  };
-}
-
-function setSyncing(v) {
-  state.syncing=v;
-  const dot=document.querySelector('.sync-dot');
-  const txt=dot?.nextSibling;
-  if(dot){dot.className='sync-dot'+(v?' syncing':'');}
-  if(txt&&txt.nodeType===3) txt.textContent=v?'Salvando...':'Sincronizado';
-}
-
-// ============================================================
-// SETUP SCREEN
-// ============================================================
-function renderSetupScreen() {
-  document.getElementById('app').innerHTML = `<div class="setup-wrap">
-    <div class="setup-card">
-      <div style="font-size:32px;margin-bottom:.75rem">⚖</div>
-      <h2>Configuração Inicial — Firebase</h2>
-      <p>Para que o sistema funcione em todos os computadores simultaneamente, você precisa criar um banco de dados gratuito no Firebase do Google e colar as configurações neste arquivo. Siga os passos abaixo:</p>
-      
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-content">
-          <div class="step-title">Acesse o Firebase Console</div>
-          <div class="step-desc">Abra o navegador e vá em <strong>console.firebase.google.com</strong>. Entre com uma conta Google do cartório.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-content">
-          <div class="step-title">Crie um novo projeto</div>
-          <div class="step-desc">Clique em "Criar um projeto", dê o nome <strong>cartorio-maraba</strong>, desative o Google Analytics se quiser, e clique em "Criar projeto".</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-content">
-          <div class="step-title">Registre um aplicativo Web</div>
-          <div class="step-desc">Na tela do projeto, clique no ícone <strong>&lt;/&gt;</strong> (Web). Dê o nome "cartorio-web", clique em "Registrar app" e copie o objeto <code>firebaseConfig</code> mostrado.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-content">
-          <div class="step-title">Crie o banco de dados Firestore</div>
-          <div class="step-desc">No menu lateral esquerdo vá em <strong>Firestore Database → Criar banco de dados</strong>. Escolha <strong>Modo de produção</strong>, selecione a região <strong>us-east1</strong> e confirme.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-content">
-          <div class="step-title">Configure as regras de acesso</div>
-          <div class="step-desc">Ainda no Firestore, clique na aba <strong>Regras</strong>, substitua todo o conteúdo pelo código abaixo e clique em <strong>Publicar</strong>:</div>
-          <div class="code-box">rules_version = '2';<br>service cloud.firestore {<br>&nbsp;&nbsp;match /databases/{database}/documents {<br>&nbsp;&nbsp;&nbsp;&nbsp;match /{document=**} {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allow read, write: if true;<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;}<br>}</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">6</div>
-        <div class="step-content">
-          <div class="step-title">Cole as configurações no arquivo HTML</div>
-          <div class="step-desc">Abra o arquivo <strong>cartorio_maraba.html</strong> em um editor de texto (como o Bloco de Notas). Procure o trecho <code>const FIREBASE_CONFIG = {</code> e substitua cada valor <code>"COLE_AQUI_..."</code> pelo valor correspondente copiado do Firebase.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">7</div>
-        <div class="step-content">
-          <div class="step-title">Distribua o arquivo</div>
-          <div class="step-desc">Salve o arquivo e coloque-o em uma pasta compartilhada na rede, ou envie por WhatsApp/e-mail para cada computador. Qualquer pessoa que abrir o arquivo no navegador (Chrome ou Edge) terá acesso ao sistema em tempo real.</div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-      <div style="font-size:12px;color:var(--muted);background:var(--surface2);padding:1rem;border-radius:var(--r)">
-        <strong>Dica:</strong> O Firebase oferece um plano gratuito (Spark) que suporta até 50.000 leituras e 20.000 escritas por dia — mais do que suficiente para o uso do cartório. Não é necessário cartão de crédito para criar a conta.
-      </div>
-      <div style="margin-top:1.25rem;text-align:center">
-        <button class="btn btn-primary" onclick="location.reload()"><i class="ti ti-refresh" aria-hidden="true"></i> Já configurei — recarregar sistema</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-// ============================================================
-// START
-// ============================================================
-initFirebase();
-</script>
-</body>
-</html>
+    ${S.activeTab==='dados'?tabDados(p):''}
+    ${S.activeTab==='checklist'?t
